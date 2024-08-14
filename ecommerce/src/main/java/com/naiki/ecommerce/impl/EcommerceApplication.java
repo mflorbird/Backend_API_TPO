@@ -1,4 +1,4 @@
-package com.naiki.ecommerce;
+package com.naiki.ecommerce.impl;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
