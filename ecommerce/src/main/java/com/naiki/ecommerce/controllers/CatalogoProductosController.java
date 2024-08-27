@@ -32,25 +32,25 @@ public class CatalogoProductosController {
     }
 
     // Detalle de un producto
-    @GetMapping("/detalleProducto/{productoId}")
+    @RequestMapping("/detalleProducto/{productoId}")
     public String getDetalleProducto(String productoId) {
         return service.getDetalleProducto(productoId);
     }
 
     // Revisar stock de un producto
-    @GetMapping("/stockProducto/{productoId}")
+    @RequestMapping("/stockProducto/{productoId}")
     public String getStockProducto(String productoId) {
         return service.getStockProducto(productoId);
     }
 
     // Agregar un producto al carrito (Ver si se superpone)
-    @GetMapping("/agregarProductoAlCarrito/{productoId}")
+    @RequestMapping("/agregarProductoAlCarrito/{productoId}")
     public String agregarProductoAlCarrito(String productoId) {
         return service.agregarProductoAlCarrito(productoId);
     }
 
     // Agregar a Favoritos del usuario
-    @GetMapping("/agregarProductoAFavoritos/{userId}/{productoId}")
+    @RequestMapping("/agregarProductoAFavoritos/{userId}/{productoId}")
     public String agregarProductoAFavoritos(String userId, String productoId) {
         return service.agregarProductoAFavoritos(userId, productoId);
     }
