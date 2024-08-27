@@ -2,9 +2,10 @@ package com.naiki.ecommerce.controllers;
 
 import com.naiki.ecommerce.service.CatalogoProductosService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping ("api/v1/gestionCatalogo")
@@ -20,8 +21,8 @@ public class CatalogoProductosController {
     }
 
     // Productos por categoria
-    @GetMapping("/productosPorCategoria/{categoria}")
-    public String getProductosPorCategoria(String categoria) {
+    @RequestMapping("/productosPorCategoria/{categoria}")
+    public String getProductosPorCategoria(@PathVariable String categoria) {
         return service.getProductosPorCategoria(categoria);
     }
 
@@ -33,25 +34,25 @@ public class CatalogoProductosController {
 
     // Detalle de un producto
     @RequestMapping("/detalleProducto/{productoId}")
-    public String getDetalleProducto(String productoId) {
+    public String getDetalleProducto(@PathVariable String productoId) {
         return service.getDetalleProducto(productoId);
     }
 
     // Revisar stock de un producto
     @RequestMapping("/stockProducto/{productoId}")
-    public String getStockProducto(String productoId) {
+    public String getStockProducto(@PathVariable String productoId) {
         return service.getStockProducto(productoId);
     }
 
     // Agregar un producto al carrito (Ver si se superpone)
     @RequestMapping("/agregarProductoAlCarrito/{productoId}")
-    public String agregarProductoAlCarrito(String productoId) {
+    public String agregarProductoAlCarrito(@PathVariable String productoId) {
         return service.agregarProductoAlCarrito(productoId);
     }
 
     // Agregar a Favoritos del usuario
     @RequestMapping("/agregarProductoAFavoritos/{userId}/{productoId}")
-    public String agregarProductoAFavoritos(String userId, String productoId) {
+    public String agregarProductoAFavoritos(@PathVariable String userId, @PathVariable String productoId) {
         return service.agregarProductoAFavoritos(userId, productoId);
     }
 
