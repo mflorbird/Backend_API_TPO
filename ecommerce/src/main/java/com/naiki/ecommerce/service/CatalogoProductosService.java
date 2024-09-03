@@ -1,9 +1,22 @@
 package com.naiki.ecommerce.service;
 
+import com.naiki.ecommerce.repository.ProductoRepository;
+import com.naiki.ecommerce.repository.entity.Producto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CatalogoProductosService {
+
+    @Autowired
+    private ProductoRepository productoRepository;
+
+    // Productos todos
+    public List<Producto> getProductos() {
+        return productoRepository.findAll();
+    }
 
     // Productos destacados
     public String getProductosDestacados() {
@@ -21,9 +34,9 @@ public class CatalogoProductosService {
     }
 
     // Detalle de un producto
-    public String getDetalleProducto(String productoId)
-    {
-        return "Detalle de un producto: " + productoId;
+    public Producto getDetalleProducto(String productoId) {
+        Producto producto =  productoRepository.findById(Long.valueOf(productoId)).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        return producto;
     }
 
     // Revisar stock de un producto

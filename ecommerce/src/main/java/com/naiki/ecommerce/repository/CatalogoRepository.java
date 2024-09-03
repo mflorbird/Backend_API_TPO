@@ -40,3 +40,4 @@ public class CatalogoRepository {
             return "Agregar a Favoritos del usuario: " + userId + " - " + productoId;
         }
 }
+

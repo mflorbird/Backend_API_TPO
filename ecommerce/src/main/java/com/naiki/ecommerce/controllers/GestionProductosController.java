@@ -2,6 +2,7 @@ package com.naiki.ecommerce.controllers;
 
 import com.naiki.ecommerce.service.GestionProductosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
@@ -15,8 +16,9 @@ public class GestionProductosController {
 
     // Have to add the photo to the POST
     @PostMapping ("/crearProducto")
-    public void altaProducto(String descripcion, String categoria) throws Exception{
-
+    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion) {
+        gestionProductosService.altaProducto(nombre, categoria, descripcion);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping ("/eliminarProducto")

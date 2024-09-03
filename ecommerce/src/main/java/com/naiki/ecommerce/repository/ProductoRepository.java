@@ -1,18 +1,12 @@
 package com.naiki.ecommerce.repository;
 
 import com.naiki.ecommerce.repository.entity.Producto;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public class ProductoRepository {
 
-    private List<Producto> listProducto = new ArrayList<>();
-
-    public ProductoRepository(){
-        listProducto.add(new Producto("Air Max","Urbano"));
-    }
+public interface ProductoRepository extends JpaRepository<Producto, Long>  {
 
 }
