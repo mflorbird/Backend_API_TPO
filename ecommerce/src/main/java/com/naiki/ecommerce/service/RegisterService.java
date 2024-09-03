@@ -18,13 +18,13 @@ public class RegisterService {
     // Registro de un nuevo usuario
     public String registerUser(User user) {
         if (registerRepository.findByUsername(user.getUsername()) != null) {
-            return "El nombre de usuario ya está en uso: " + user.getUsername();
+            return "El nombre "+ user.getUsername() + " no está disponible.";
         }
         if (registerRepository.findByEmail(user.getEmail()) != null) {
-            return "El correo electrónico ya está en uso: " + user.getEmail();
+            return "El correo electrónico " + user.getEmail() + " ya se encuentra registrado.";
         }
         registerRepository.saveUser(user);
-        return "Usuario registrado exitosamente: " + user.getUsername();
+        return user.getUsername() + " tu cuenta se creó con éxito!";
     }
 }
 

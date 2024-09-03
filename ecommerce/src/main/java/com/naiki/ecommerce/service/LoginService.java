@@ -19,18 +19,18 @@ public class LoginService {
     public String authenticateByUsername(String username, String password) {
         User user = loginRepository.findByUsername(username);
         if (user != null && user.getPassword().equals(password)) {
-            return "Login exitoso para el usuario: " + username;
+            return "Hola "+ username + ", te damos la bienvenida a Naiki.";
         }
-        return "Login fallido: nombre de usuario o contraseña incorrectos";
+        return "El usuario o la contraseña son incorrectos. Intenta nuevamente.";
     }
 
     // Autenticar un usuario por su correo electrónico y contraseña
     public String authenticateByEmail(String email, String password) {
         User user = loginRepository.findByEmail(email);
         if (user != null && user.getPassword().equals(password)) {
-            return "Login exitoso para el correo: " + email;
+            return "Hola " + email + ", te damos la bienvenida a Naiki.";
         }
-        return "Login fallido: correo electrónico o contraseña incorrectos";
+        return "El correo o la contraseña son incorrectos. Intenta nuevamente.";
     }
 
 
