@@ -25,4 +25,35 @@ public class Producto {
     @Column(name = "categoria")
     private String categoria;
 
+    @Column(name = "precio")
+    private Double precio;
+
+    @Column(name = "stock")
+    private Integer stock;
+
+    @Column(name = "imagen")
+    private String imagen;
+
+    @Column(name = "destacado")
+    private Boolean destacado;
+
+    @Column(name = "fechaCreacion")
+    private String fechaCreacion;
+
+    @Column(name = "fechaModificacion")
+    private String fechaModificacion;
+
+//    @ManyToOne
+//    @JoinColumn(name = "usuarioCreacion", referencedColumnName = "id", nullable = false)
+//    @Column(name = "usuarioCreacion")
+//    private User usuarioCreacion;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "usuarioModificacion", referencedColumnName = "id", nullable = true)
+//    @Column(name = "usuarioModificacion")
+//    private User usuarioModificacion;
+
+    @Column(name = "estado")
+    private String estado;
+    
 }
