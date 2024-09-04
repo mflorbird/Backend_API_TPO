@@ -19,13 +19,13 @@ public class CatalogoProductosService {
     }
 
     // Productos destacados
-    public String getProductosDestacados() {
-        return "Productos destacados";
+    public List<Producto> getProductosDestacados() {
+        return productoRepository.findByDestacado(true);
     }
 
     // Productos por categoria
-    public String getProductosPorCategoria(String categoria) {
-        return "Productos por categoria: " + categoria;
+    public List<Producto> getProductosPorCategoria(String categoria) {
+        return productoRepository.findByCategoria(categoria);
     }
 
     // Productos recientes vistos por el usuario
@@ -35,13 +35,13 @@ public class CatalogoProductosService {
 
     // Detalle de un producto
     public Producto getDetalleProducto(String productoId) {
-        Producto producto =  productoRepository.findById(Long.valueOf(productoId)).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        return producto;
+        return productoRepository.findById(Long.parseLong(productoId)).orElse(null);
     }
 
     // Revisar stock de un producto
-    public String getStockProducto(String productoId) {
-        return "Revisar stock de un producto: " + productoId;
+    public int getStockProducto(String productoId) {
+        Producto producto = productoRepository.findById(Long.parseLong(productoId)).orElse(null);
+        return producto != null ? producto.getStock() : -1;
     }
 
     // Agregar un producto al carrito (Ver si se superpone)

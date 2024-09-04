@@ -24,14 +24,14 @@ public class CatalogoProductosController {
 
     // Productos destacados
     @RequestMapping("/productosDestacados")
-    public String getProductosDestacados() {
-        return service.getProductosDestacados();
+    public ResponseEntity<?> getProductosDestacados() {
+        return ResponseEntity.ok(service.getProductosDestacados());
     }
 
     // Productos por categoria
     @RequestMapping("/productosPorCategoria/{categoria}")
-    public String getProductosPorCategoria(@RequestParam("categoria") String categoria) {
-        return service.getProductosPorCategoria(categoria);
+    public ResponseEntity<?> getProductosPorCategoria(@RequestParam("categoria") String categoria) {
+        return ResponseEntity.ok(service.getProductosPorCategoria(categoria));
     }
 
     // Productos recientes vistos por el usuario
@@ -49,8 +49,8 @@ public class CatalogoProductosController {
 
     // Revisar stock de un producto
     @RequestMapping("/stockProducto/{productoId}")
-    public String getStockProducto(@RequestParam("productoId") String productoId) {
-        return service.getStockProducto(productoId);
+    public ResponseEntity<?> getStockProducto(@RequestParam("productoId") String productoId) {
+        return ResponseEntity.ok(service.getStockProducto(productoId));
     }
 
     // Agregar un producto al carrito (Ver si se superpone)

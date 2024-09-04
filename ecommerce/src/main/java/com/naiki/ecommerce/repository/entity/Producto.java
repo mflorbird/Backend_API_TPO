@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -55,5 +53,5 @@ public class Producto {
 
     @Column(name = "estado")
     private String estado;
-    
+
 }
