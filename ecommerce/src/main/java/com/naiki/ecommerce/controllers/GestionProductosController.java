@@ -21,9 +21,15 @@ public class GestionProductosController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping ("/eliminarProducto")
-    public void bajaProducto() throws Exception{
+    @PutMapping("/modificarStockProducto/{productoId}")
+    public ResponseEntity<?> modificarStockProducto(@RequestParam("productoId") Long productoId, @RequestParam("cantidad") int cantidad) {
+        gestionProductosService.modificarStockProducto(productoId, cantidad);
+        return ResponseEntity.ok().build();
+    }
 
+    @DeleteMapping ("/eliminarProducto/{productoId}")
+    public void bajaProducto(@RequestParam("productoId") Long productoId) throws Exception{
+        gestionProductosService.bajaProducto(productoId);
     }
 
 }

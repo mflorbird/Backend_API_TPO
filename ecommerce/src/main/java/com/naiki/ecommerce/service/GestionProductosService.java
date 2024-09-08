@@ -19,6 +19,10 @@ public class GestionProductosService {
         productoRepository.save(producto);
     }
 
+    public void modificarStockProducto(Long id, int cantidad){
+        productoRepository.modificarStock(id, cantidad);
+    }
+
     public void bajaProducto(Long id) {
         productoRepository.deleteById(id);
     }
