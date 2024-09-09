@@ -2,6 +2,9 @@ package com.naiki.ecommerce.repository.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,5 +43,15 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
 
 }
