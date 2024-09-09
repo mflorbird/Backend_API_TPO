@@ -3,17 +3,22 @@ package com.naiki.ecommerce.repository.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+@Data
 @Entity
-@Table(name = "users")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -30,18 +35,10 @@ public class User {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
     private LocalDate birthDate;
 
-    // toString (opcional)
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", birthDate=" + birthDate +
-                '}';
-    }
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }
