@@ -13,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Data
 @Entity
 @Builder
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {

@@ -49,18 +49,6 @@ public class UserAuthenticationService {
                 .accessToken(jwtToken)
                 .build();
     }
-
-//    @Autowired
-//    public UserAuthenticationService(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//    // Cargar los detalles del usuario por nombre de usuario o email
-//    @Override
-//    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-//        return userRepository.findByUsername(usernameOrEmail)
-//                .or(() -> userRepository.findByEmail(usernameOrEmail))
-//                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + usernameOrEmail));
-//    }
+    
 }
 
