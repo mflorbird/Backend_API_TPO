@@ -44,4 +44,22 @@ public class Carrito{
     }
 }
 
+//metodos
 
+    public void agregarProducto(ItemCarrito item){
+        this.items.add(item);
+        recalcularTotal();
+    }
+
+    public void eliminarProducto(ItemCarrito item){
+        this.items.remove(item);
+        recalcularTotal();
+    }
+
+    public void recalcularTotal() {
+        this.totalPrecio = items.stream()
+                .mapToDouble(item.getProducto().getPrecio() * item.getCantidad())
+                .sum();
+    }
+
+}
