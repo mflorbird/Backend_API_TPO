@@ -17,6 +17,12 @@ public class ItemCarrito{
 
     private int cantidad;
 
+    //Construcctor producto y cant
+    public ItemCarrito(Producto producto, int carrito){
+        this.producto=producto;
+        this.cantidad=cantidad;
+    }
+
     //get y set
     public Long getId() {
         return id;
