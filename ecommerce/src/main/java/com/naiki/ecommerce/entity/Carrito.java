@@ -10,7 +10,7 @@ public class Carrito{
     @GeneratedValue(strategy=GenerationType.IDENTITY) // PARA GENERAR SOLO EL ID
     private long id;
 
-    @OneToMany
+    @OneToMany(mappedBy="carrito", cascade=CascadeType.ALL, orphanRemoval=true)// relacion c/productos del carrito
     public List<ItemCarrito> items= new ArrayList<>(); //lista de productos en el carro
     private double totalPrecio=0.0; //este es el precio del carro
 
