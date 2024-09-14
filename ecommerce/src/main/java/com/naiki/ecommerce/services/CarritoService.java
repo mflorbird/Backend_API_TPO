@@ -60,7 +60,7 @@ public class CarritoService{
         if (carritoOpt.isPresent()) {
             Carrito carrito = carritoOpt.get();
             //si el carro existe remueve el producto
-            carrito.getItems().removeIf(item.getProducto().getId().equals(productoId));
+            carrito.getItems().removeIf(item->item.getProducto().getId().equals(productoId));
             //y recalcula el precio
             carrito.recalcularTotal();
             carritoRepository.save(carrito);
