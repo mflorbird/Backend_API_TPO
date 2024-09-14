@@ -18,6 +18,9 @@ public class ItemCarrito{
     private int cantidad;
 
     //Construcctor producto y cant
+
+    public ItemCarrito(){} // constructor vacio para JPA
+
     public ItemCarrito(Producto producto, int cantidad){
         this.producto=producto;
         this.cantidad=cantidad;
