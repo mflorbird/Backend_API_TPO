@@ -4,11 +4,15 @@ import com.naiki.ecommerce.repository.UserRepository;
 import com.naiki.ecommerce.controllers.config.JwtService;
 import com.naiki.ecommerce.controllers.auth.*;
 import com.naiki.ecommerce.repository.entity.User;
+//import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 
 @Service
