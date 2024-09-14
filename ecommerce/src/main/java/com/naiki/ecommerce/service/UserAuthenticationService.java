@@ -49,6 +49,6 @@ public class UserAuthenticationService {
                 .accessToken(jwtToken)
                 .build();
     }
-    
+
 }
 
