@@ -14,6 +14,9 @@ public class Carrito{
     public List<ItemCarrito> items= new ArrayList<>(); //lista de productos en el carro
     private double totalPrecio=0.0; //este es el precio del carro
 
+    @Column(name="userId")
+    private Long userId; // este deberia ser el usuario que tiene el carrito
+
     // get y set
 
     public long getId() {
