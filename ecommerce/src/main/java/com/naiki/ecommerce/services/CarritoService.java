@@ -19,7 +19,7 @@ public class CarritoService{
     private ProductoRepository productoRepository;
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
-    public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad){
+    public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad) throws SinStockException{
         //para buscar el carrito por id
         //busca el carrito por ID en la BD usando carritoReposito.
         //devuelve el optional<carrito> que puede tener o no dato.
@@ -31,6 +31,10 @@ public class CarritoService{
             //si no existe lo crea.
         }else{
             carrito=new Carrito ();
+        }
+        //HAY QUE VERIFICAR STOCK
+        if(producto.getStock()<cantidad){
+            throw new SinStockException ("Stock insuficiente para producto:" + producto.getNombre());
         }
 
         //Agregar o actualizar el item del carrito
@@ -56,6 +60,7 @@ public class CarritoService{
         return carritoRepository.save(carrito);
     }
 
+    @Transactional
     public void eliminarProductoDelCarrito(Long carritoId, Long productoId) {
       //busca carro
         Optional<Carrito> carritoOpt = carritoRepository.findById(carritoId);
