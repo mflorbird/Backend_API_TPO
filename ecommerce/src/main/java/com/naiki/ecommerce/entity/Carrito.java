@@ -14,8 +14,9 @@ public class Carrito{
     public List<ItemCarrito> items= new ArrayList<>(); //lista de productos en el carro
     private double totalPrecio=0.0; //este es el precio del carro
 
-    @Column(name="userId")
-    private Long userId; // este deberia ser el usuario que tiene el carrito
+    @ManyToOne // relacion con la entidad usuaro
+    @JoinColumn(name="user_id")
+    private Usuario usuario; // relaciona el carrito con el usuario
 
     // get y set
 
@@ -41,6 +42,13 @@ public class Carrito{
 
     public void setTotalPrecio(double totalPrecio) {
         this.totalPrecio = totalPrecio;
+    }
+
+    public Usuario getUsuario(){
+        return usuario;
+    }
+    public void setUsuario(Usuario usuario){
+        this.usuario=usuario;
     }
 }
 
