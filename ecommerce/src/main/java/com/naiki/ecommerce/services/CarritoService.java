@@ -15,6 +15,8 @@ public class CarritoService{
     private CarritoRepository carritoRepository;
     @Autowired
     private ItemCarritoRepository itemCarritoRepository;
+    @Autowired
+    private ProductoRepository productoRepository;
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
     public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad){
