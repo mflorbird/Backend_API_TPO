@@ -14,7 +14,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserData> getUser(@PathVariable Long id) throws Exception {
-        UserData user = userService.getUserById(id);
+        UserData user;
+        user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
 

@@ -12,17 +12,18 @@ public class AuthController {
 
     private final UserAuthenticationService service;
 
+
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(
             @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthResponse> authenticate(
-            @RequestBody AuthRequest request) {
+    @PostMapping("/auth")
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
+
 
     @GetMapping("/test")
     public ResponseEntity<?> test() {
