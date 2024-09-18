@@ -27,7 +27,9 @@ public class UserAuthenticationService {
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
                 .email(request.getEmail())
+                .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .birthDate(request.getBirthDate())
                 .role(request.getRole())
                 .build();
 
@@ -50,6 +52,8 @@ public class UserAuthenticationService {
                 .accessToken(jwtToken)
                 .build();
     }
+
+
 
 }
 

@@ -23,10 +23,10 @@ public class GeneralConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return userRepository.findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+         @Override
+             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                 return userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
             }
         };
     }
@@ -47,6 +47,7 @@ public class GeneralConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+
     }
 
 }
