@@ -19,5 +19,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<UserData> getAuthenticatedUserProfile() throws Exception {
+        UserData user;
+        user = userService.getAuthenticatedUserProfile();
+        return ResponseEntity.ok(user);
+    }
+
+
 }
 
