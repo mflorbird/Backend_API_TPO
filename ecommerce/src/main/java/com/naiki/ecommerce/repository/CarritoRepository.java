@@ -1,3 +1,5 @@
+package com.naiki.ecommerce.repository;
+
 import com.naiki.ecommerce.repository.entity.Carrito;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
