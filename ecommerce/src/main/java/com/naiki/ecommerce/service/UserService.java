@@ -19,7 +19,13 @@ public class UserService {
         var userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findById(id).orElseThrow(() -> new Exception("El usuario no se ha encontrado."));
-        return new UserData(user.getId(), user.getFirstName(), user.getEmail());
+        return new UserData(user.getId(),user.getFirstName(), user.getFirstName(), user.getEmail());
+    }
+
+    public UserData getAuthenticatedUserProfile() throws Exception {
+        var userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(userName).orElseThrow(() -> new Exception("El Usuario no se ha encontrado."));
+        return new UserData(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
     }
 
 }
