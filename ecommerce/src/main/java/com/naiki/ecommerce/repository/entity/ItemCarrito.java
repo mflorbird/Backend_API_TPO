@@ -69,4 +69,9 @@ public class ItemCarrito {
     public int getCantidad() {
         return cantidad;
     }
+
+    public Long getProductoId() {
+        return producto.getId(); // Esto debería devolver un Long
+    }
+
 }

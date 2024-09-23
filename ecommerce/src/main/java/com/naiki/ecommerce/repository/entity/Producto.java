@@ -54,4 +54,22 @@ public class Producto {
     @Column(name = "estado")
     private String estado;
 
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

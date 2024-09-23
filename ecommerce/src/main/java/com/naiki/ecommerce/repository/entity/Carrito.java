@@ -1,6 +1,6 @@
 package com.naiki.ecommerce.repository.entity;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +25,40 @@ public class Carrito {
     private User usuario; // relaciona el carrito con el usuario
 
 
+    //get y set
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<ItemCarrito> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemCarrito> items) {
+        this.items = items;
+    }
+
+    public double getTotalPrecio() {
+        return totalPrecio;
+    }
+
+    public void setTotalPrecio(double totalPrecio) {
+        this.totalPrecio = totalPrecio;
+    }
+
+    public User getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
+    }
+
 //metodos
 
     public void agregarProducto(ItemCarrito item) {
@@ -36,8 +70,11 @@ public class Carrito {
         this.items.remove(item);
         recalcularTotal();
     }
-//agregar vacias producto
 
+    public void vaciarCarrito() {
+        this.items.clear();
+        recalcularTotal();
+    }
 
     public void recalcularTotal() {
         this.totalPrecio = items.stream() //stm para aplicar operaciones
