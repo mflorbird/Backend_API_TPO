@@ -14,13 +14,11 @@ public class GestionProductosController {
     @Autowired
     private GestionProductosService gestionProductosService;
 
-    //private final String UPLOAD_DIRECTORY = "C:\\Users\\nidig\\OneDrive\\Imágenes\\mocasin.jpg"; // Reemplaza esta ruta para la foto
-
     // Have to add the photo to the POST
     @PostMapping ("/crearProducto")
-    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion) {
+    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion,@RequestParam("foto") String foto) {
         try{
-            gestionProductosService.altaProducto(nombre, categoria, descripcion);
+            gestionProductosService.altaProducto(nombre, categoria, descripcion, foto);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
