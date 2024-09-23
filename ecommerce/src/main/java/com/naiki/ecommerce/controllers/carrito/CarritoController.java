@@ -1,5 +1,6 @@
 package com.naiki.ecommerce.controllers.carrito;
 
+import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.entity.*;
 import com.naiki.ecommerce.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ public class CarritoController {
     @Autowired // para que el controller use los metodos de service
     private CarritoService carritoService;
 
-    @GetMapping // para tener todos los carritos
+    @GetMapping("/all")
     public List<Carrito> getAllCarritos() {
-        return carritoService.findAll(); //->
+        return carritoService.findAll();
     }
 
     @GetMapping("/{id}")  // obtener carrito por id
@@ -30,25 +31,25 @@ public class CarritoController {
         return ResponseEntity.ok(carrito);
     }
 
-    @PostMapping // crear nuevo carro
-    public ResponseEntity<Carrito> createCarrito(@RequestBody Carrito carrito) {
-        Carrito newCarrito = carritoService.save(carrito);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCarrito);
+    @PostMapping("/create") // crea un carrito
+    public ResponseEntity<Carrito> createCarrito(@RequestHeader("Authorization") String token) {
+        Carrito carritoCreado = carritoService.createCarrito(token);
+        return ResponseEntity.ok(carritoCreado);
     }
 
-    @PostMapping("/{carritoId}/productos") // agrega producto al carrito
-    public ResponseEntity<Carrito> addProductoToCarrito(@PathVariable Long carritoId, @RequestBody Producto producto, @RequestParam int cantidad) {
+    @PostMapping("/agregarProducto") // agrega producto al carrito
+    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody Long productoId, @RequestBody int cantidad, @RequestBody Long carritoId)  {
         try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, producto, cantidad);
+            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, cantidad);
             return ResponseEntity.ok(carrito);
         } catch (SinStockException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
     }
 
-    @DeleteMapping("/{carritoId}/productos/{productoId}") // elimina producto del carrito
-    public ResponseEntity<Void> removeProductoFromCarrito(@PathVariable Long carritoId, @PathVariable Long productoId) {
-        carritoService.eliminarProductoDelCarrito(carritoId, productoId);
+    @DeleteMapping("/eliminarProducto") // elimina producto del carrito
+    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody Long productoId, @RequestBody Long carritoId, @RequestBody int cantidad) {
+        carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
         return ResponseEntity.noContent().build();
     }
 }
