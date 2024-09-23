@@ -36,8 +36,6 @@ public class ItemCarrito{
 //    public ItemCarrito(Producto producto, int cantidad){
 //        this.producto=producto;
 //        this.cantidad=cantidad;
-    }
-
 //    public void setId(Long id) {
 //        this.id = id;
 //    }
