@@ -11,12 +11,17 @@ public class GestionProductosService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public void altaProducto(String nombre, String categoria, String descripcion) {
+    public void altaProducto(String nombre, String categoria, String descripcion, String foto) {
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setCategoria(categoria);
         producto.setDescripcion(descripcion);
+        producto.setImagen(foto);
         productoRepository.save(producto);
+    }
+
+    public void modificarStockProducto(Long id, int cantidad){
+        productoRepository.modificarStock(id, cantidad);
     }
 
     public void bajaProducto(Long id) {
@@ -27,5 +32,4 @@ public class GestionProductosService {
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         return producto;
     }
-
 }
