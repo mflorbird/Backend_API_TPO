@@ -2,16 +2,17 @@ package com.naiki.ecommerce.service;
 
 import com.naiki.ecommerce.repository.CarritoRepository;
 import com.naiki.ecommerce.repository.ItemCarritoRepository;
+import com.naiki.ecommerce.repository.ProductoRepository;
 import com.naiki.ecommerce.repository.entity.Carrito;
 import com.naiki.ecommerce.repository.entity.ItemCarrito;
 import com.naiki.ecommerce.repository.entity.Producto;
-import com.naiki.ecommerce.repository.ProductoRepository;
-import com.naiki.ecommerce.exception.SinStockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+//aca tiene que estar revisar el checkout . verificar que tenga stock
 
 @Service // para que spring la pueda poner en otraspartes.
 public class CarritoService{
@@ -25,7 +26,7 @@ public class CarritoService{
     private ProductoRepository productoRepository;
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
-    public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad) throws SinStockException{
+    public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad) {
         //para buscar el carrito por id
         //busca el carrito por ID en la BD usando carritoReposito.
         //devuelve el optional<carrito> que puede tener o no dato.
@@ -40,7 +41,7 @@ public class CarritoService{
         }
         //HAY QUE VERIFICAR STOCK
         if(producto.getStock()<cantidad){
-            throw new SinStockException ("Stock insuficiente para producto:" + producto.getNombre());
+            System.console().writer().print("Stock insuficiente para producto:" + producto.getNombre());
         }
 
         //Agregar o actualizar el item del carrito

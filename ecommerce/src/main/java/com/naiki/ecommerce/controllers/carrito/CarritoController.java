@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+// aca hay que validar la informacion del mensaje.
 @RestController //este es el que maneja las solicitudes https y devuelve JSON
 @RequestMapping("/api/carritos") // esta es la ruta
 public class CarritoController {
