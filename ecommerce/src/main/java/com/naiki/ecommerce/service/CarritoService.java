@@ -5,18 +5,22 @@ import com.naiki.ecommerce.repository.ItemCarritoRepository;
 import com.naiki.ecommerce.repository.entity.Carrito;
 import com.naiki.ecommerce.repository.entity.ItemCarrito;
 import com.naiki.ecommerce.repository.entity.Producto;
+import com.naiki.ecommerce.repository.ProductoRepository;
+import com.naiki.ecommerce.exception.SinStockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service // para que spring la pueda poner en otraspartes.
 public class CarritoService{
     @Autowired // trae los repositorios
     private CarritoRepository carritoRepository;
+
     @Autowired
     private ItemCarritoRepository itemCarritoRepository;
+
     @Autowired
     private ProductoRepository productoRepository;
 
