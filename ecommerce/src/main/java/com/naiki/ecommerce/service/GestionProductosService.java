@@ -31,5 +31,4 @@ public class GestionProductosService {
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
         return producto;
     }
-
 }
