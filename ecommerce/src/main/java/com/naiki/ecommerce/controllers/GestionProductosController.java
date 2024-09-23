@@ -14,7 +14,6 @@ public class GestionProductosController {
     @Autowired
     private GestionProductosService gestionProductosService;
 
-    // Have to add the photo to the POST
     @PostMapping ("/crearProducto")
     public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion,@RequestParam("foto") String foto) {
         try{
