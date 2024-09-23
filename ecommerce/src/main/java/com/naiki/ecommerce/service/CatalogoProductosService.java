@@ -7,8 +7,10 @@ import com.naiki.ecommerce.repository.entity.Producto;
 import com.naiki.ecommerce.repository.entity.ProductoVisitado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -67,9 +69,19 @@ public class CatalogoProductosService {
     // Productos recientes vistos por el usuario
     public List<Producto> getProductosRecientes(String email) {
         List<ProductoVisitado> productosVisitados = productoVisitadoRepository.findTop10ByUserEmailOrderByFechaVisitaDesc(email);
-        return productosVisitados.stream()
-                .map(ProductoVisitado::getProducto)
-                .toList();
+        // elegir los primeros 5 productos distintos
+        List<Producto> productosUnicos = new ArrayList<>();
+        for (ProductoVisitado productoVisitado : productosVisitados) {
+            Producto producto = productoVisitado.getProducto();
+            if (!productosUnicos.contains(producto)) {
+                productosUnicos.add(producto);
+            }
+            if (productosUnicos.size() == 5) {
+                break;
+            }
+
+        }
+        return productosUnicos;
     }
 
     // Agregar un producto a la lista de productos visitados
