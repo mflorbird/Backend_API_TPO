@@ -1,8 +1,11 @@
 package com.naiki.ecommerce.service;
 
+import com.naiki.ecommerce.controllers.config.JwtService;
+import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.CarritoRepository;
 import com.naiki.ecommerce.repository.ItemCarritoRepository;
 import com.naiki.ecommerce.repository.ProductoRepository;
+import com.naiki.ecommerce.repository.UserRepository;
 import com.naiki.ecommerce.repository.entity.Carrito;
 import com.naiki.ecommerce.repository.entity.ItemCarrito;
 import com.naiki.ecommerce.repository.entity.Producto;
@@ -39,63 +42,90 @@ public class CarritoService{
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private JwtService jwtService;
 
-
+    public Carrito createCarrito(String token) {
+        Carrito carrito = new Carrito();
+        String email = jwtService.extractUsername(token);
+        carrito.setUsuario(userRepository.findByEmail(email).orElse(null));
+        carritoRepository.save(carrito);
+        return carrito;
+    }
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
-    public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad) {
+    public Carrito agregarProductoAlCarrito(Long carritoId, Long productoId, int cantidad) throws SinStockException {
         //para buscar el carrito por id
         //busca el carrito por ID en la BD usando carritoReposito.
         //devuelve el optional<carrito> que puede tener o no dato.
-        Optional<Carrito> carritoOpt = carritoRepository.findById(carritoId);
-        Carrito carrito;
-        //si hay carro lo devuelve
-        if (carritoOpt.isPresent()){
-            carrito=carritoOpt.get();
-            //si no existe lo crea.
-        }else{
-            carrito=new Carrito ();
+        Carrito carrito = carritoRepository.findById(carritoId).orElse(null);
+        if (carrito == null) {
+            return null;
         }
-        //HAY QUE VERIFICAR STOCK
-        if(producto.getStock()<cantidad){
-            System.console().writer().print("Stock insuficiente para producto:" + producto.getNombre());
+        Producto producto = productoRepository.findById(productoId).orElse(null);
+        if (producto == null) {
+            return null;
         }
+
+        //verificar si hay stock
+        if (producto.getStock() < cantidad)  {
+            throw new SinStockException("No hay suficiente stock para el producto");
+        }
+
+        //modificar stock
+        producto.setStock(producto.getStock() - cantidad);
+        productoRepository.save(producto);
 
         //Agregar o actualizar el item del carrito
-        boolean productoExistente = false;
-        //busca si el producto ya existe en el carro
-        //pra isso recorre la lista itemcarrito .
         for (ItemCarrito item: carrito.getItems()){
-            //si existe aumenta cantidad
-            if (item.getProducto().getId() == (producto.getId())) {
-                item.setCantidad(item.getCantidad() + cantidad);//si existe se actualiza la cant.
-                productoExistente = true;
-                break;
+            if (item.getProducto().getId() == productoId) {
+                item.setCantidad(item.getCantidad() + cantidad);
+                carrito.recalcularTotal();
+                carritoRepository.save(carrito);
+                return carrito;
             }
         }
-        //si el producto no existe crea el producto en el carro.
-        if (!productoExistente){
-            ItemCarrito newItem=new ItemCarrito(producto, cantidad);
-            newItem.setCarrito(carrito);
-            carrito.getItems().add(newItem);
-        }
-
+        ItemCarrito newItem = new ItemCarrito(producto, cantidad);
+        newItem.setCarrito(carrito);
+        carrito.getItems().add(newItem);
         carrito.recalcularTotal();
-        return carritoRepository.save(carrito);
+        carritoRepository.save(carrito);
+        return carrito;
     }
 
+
     @Transactional
-    public void eliminarProductoDelCarrito(Long carritoId, Long productoId) {
-      //busca carro
-        Optional<Carrito> carritoOpt = carritoRepository.findById(carritoId);
-        if (carritoOpt.isPresent()) {
-            Carrito carrito = carritoOpt.get();
-            //si el carro existe remueve el producto
-            carrito.getItems().removeIf(item->item.getProducto().getId() == (productoId));
-            //y recalcula el precio
-            carrito.recalcularTotal();
-            carritoRepository.save(carrito);
+    public boolean eliminarProductoDelCarrito(Long carritoId, Long productoId, int cantidad) {
+        //busca producto
+        Producto producto = productoRepository.findById(productoId).orElse(null);
+        if (producto == null) {
+            return false;
         }
+        //modificar stock
+        producto.setStock(producto.getStock() + cantidad);
+        productoRepository.save(producto);
+
+
+
+      //busca carro
+        Carrito carrito = carritoRepository.findById(carritoId).orElse(null);
+        if (carrito == null) {
+            return false;
+        }
+        //busca item
+        for (ItemCarrito item: carrito.getItems()) {
+            if (item.getProducto().getId() == productoId) {
+                item.setCantidad(item.getCantidad() - cantidad);
+                if (item.getCantidad() <= 0) {
+                    carrito.getItems().remove(item);
+                }
+                carrito.recalcularTotal();
+                carritoRepository.save(carrito);
+                return true;
+            }
+        }
+        return false;
+
     }
 
 }

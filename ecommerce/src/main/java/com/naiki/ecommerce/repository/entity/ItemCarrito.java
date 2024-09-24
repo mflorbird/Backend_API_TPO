@@ -1,9 +1,7 @@
 package com.naiki.ecommerce.repository.entity;
-
-import com.naiki.ecommerce.repository.entity.Carrito;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
+
 
 
 @Data
@@ -14,15 +12,11 @@ public class ItemCarrito {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carrito_id")
+    
+    @ManyToOne(cascade = CascadeType.ALL)
     private Carrito carrito;
 
-    @Column
     @ManyToOne
-    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     @Column
@@ -39,39 +33,39 @@ public class ItemCarrito {
         this.cantidad = cantidad;
 
     }
-    public void setId (Long id){
-        this.id = id;
-    }
-
-    public void setCarrito (Carrito carrito){
-        this.carrito = carrito;
-    }
-
-    public void setProducto (Producto producto){
-        this.producto = producto;
-    }
-
-    public void setCantidad ( int cantidad){
-        this.cantidad = cantidad;
-    }
-    public Long getId() {
-        return id;
-    }
-
-    public Carrito getCarrito() {
-        return carrito;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public Long getProductoId() {
-        return producto.getId(); // Esto debería devolver un Long
-    }
+//    public void setId (Long id){
+//        this.id = id;
+//    }
+//
+//    public void setCarrito (Carrito carrito){
+//        this.carrito = carrito;
+//    }
+//
+//    public void setProducto (Producto producto){
+//        this.producto = producto;
+//    }
+//
+//    public void setCantidad ( int cantidad){
+//        this.cantidad = cantidad;
+//    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public Carrito getCarrito() {
+//        return carrito;
+//    }
+//
+//    public Producto getProducto() {
+//        return producto;
+//    }
+//
+//    public int getCantidad() {
+//        return cantidad;
+//    }
+//
+//    public Long getProductoId() {
+//        return producto.getId(); // Esto debería devolver un Long
+//    }
 
 }

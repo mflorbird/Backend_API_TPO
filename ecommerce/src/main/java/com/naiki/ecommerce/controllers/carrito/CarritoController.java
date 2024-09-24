@@ -18,7 +18,7 @@ public class CarritoController {
     @Autowired // para que el controller use los metodos de service
     private CarritoService carritoService;
 
-    @GetMapping // para tener todos los carritos
+    @GetMapping("/all")
     public List<Carrito> getAllCarritos() {
         return carritoService.findAll();
     }
@@ -32,10 +32,10 @@ public class CarritoController {
         return ResponseEntity.ok(carrito);
     }
 
-    @PostMapping // crear nuevo carro
-    public ResponseEntity<Carrito> createCarrito(@RequestBody Carrito carrito) {
-        Carrito newCarrito = carritoService.save(carrito);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCarrito);
+    @PostMapping("/create") // crea un carrito
+    public ResponseEntity<Carrito> createCarrito(@RequestHeader("Authorization") String token) {
+        Carrito carritoCreado = carritoService.createCarrito(token);
+        return ResponseEntity.ok(carritoCreado);
     }
 
     @PostMapping("/{carritoId}/productos") // agrega producto al carrito
@@ -49,9 +49,9 @@ public class CarritoController {
 
     }
 
-    @DeleteMapping("/{carritoId}/productos/{productoId}") // elimina producto del carrito
-    public ResponseEntity<Void> removeProductoFromCarrito(@PathVariable Long carritoId, @PathVariable Long productoId) {
-        carritoService.eliminarProductoDelCarrito(carritoId, productoId);
+    @DeleteMapping("/eliminarProducto") // elimina producto del carrito
+    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody Long productoId, @RequestBody Long carritoId, @RequestBody int cantidad) {
+        carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
         return ResponseEntity.noContent().build();
     }
 }

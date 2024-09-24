@@ -17,12 +17,12 @@ public interface ProductoRepository extends JpaRepository<Producto, Long>  {
     List<Producto> findByDestacado(Boolean destacado);
     List<Producto> findByCategoria(String categoria);
 
-    Optional<Producto> findById(Long id);
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE productos " +
             "SET stock = :cantidad "+
             "WHERE id = :id", nativeQuery = true)
     void modificarStock(@Param(value = "id") long id,@Param(value = "cantidad") int cantidad);
+
+
 }
