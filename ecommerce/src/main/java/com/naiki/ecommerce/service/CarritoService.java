@@ -44,8 +44,7 @@ public class CarritoService{
     }
 
     public Carrito findById(Long id) {
-        Carrito carrito = carritoRepository.findById(id).orElse(null);
-        return carrito;
+        return carritoRepository.findById(id).orElse(null);
     }
 
     public Carrito createCarrito(String token) {

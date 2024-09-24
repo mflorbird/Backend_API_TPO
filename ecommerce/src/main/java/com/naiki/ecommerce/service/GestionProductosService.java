@@ -28,6 +28,10 @@ public class GestionProductosService {
         productoRepository.modificarStock(id, cantidad);
     }
 
+    public void modificarDestacadoProducto(Long id, boolean destacado){
+        productoRepository.modificarDestacado(id, destacado);
+    }
+
     public void bajaProducto(Long id) {
         productoRepository.deleteById(id);
     }
