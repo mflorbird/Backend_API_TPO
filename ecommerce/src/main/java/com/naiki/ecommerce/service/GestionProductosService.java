@@ -11,12 +11,16 @@ public class GestionProductosService {
     @Autowired
     private ProductoRepository productoRepository;
 
-    public void altaProducto(String nombre, String categoria, String descripcion, String foto) {
+    public void altaProducto(String nombre, String categoria, String descripcion, String foto, String destacado, String estado,Double precio, int stock) {
         Producto producto = new Producto();
         producto.setNombre(nombre);
         producto.setCategoria(categoria);
         producto.setDescripcion(descripcion);
         producto.setImagen(foto);
+        producto.setEstado(destacado);
+        producto.setEstado(estado);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
         productoRepository.save(producto);
     }
 

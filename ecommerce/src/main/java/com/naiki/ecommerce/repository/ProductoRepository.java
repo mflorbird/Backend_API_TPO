@@ -20,7 +20,8 @@ public interface ProductoRepository extends JpaRepository<Producto, Long>  {
     @Transactional
     @Modifying
     @Query(value = "UPDATE productos " +
-            "SET stock = :cantidad "+
+            "SET stock = :cantidad ,"+
+            "fecha_modificacion = NOW() "+
             "WHERE id = :id", nativeQuery = true)
     void modificarStock(@Param(value = "id") long id,@Param(value = "cantidad") int cantidad);
 

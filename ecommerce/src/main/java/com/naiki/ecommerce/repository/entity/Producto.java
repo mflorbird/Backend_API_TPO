@@ -3,9 +3,10 @@ package com.naiki.ecommerce.repository.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "productos")
 public class Producto {
@@ -36,10 +37,14 @@ public class Producto {
     private Boolean destacado;
 
     @Column(name = "fechaCreacion")
-    private String fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fechaModificacion")
-    private String fechaModificacion;
+    private LocalDateTime fechaModificacion;
+
+    public Producto (){
+        this.fechaCreacion = LocalDateTime.now();
+    }
 
 //    @ManyToOne
 //    @JoinColumn(name = "usuarioCreacion", referencedColumnName = "id", nullable = false)
