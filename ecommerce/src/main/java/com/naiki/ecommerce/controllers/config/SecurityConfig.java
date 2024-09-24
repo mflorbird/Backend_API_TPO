@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/user/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/gestionProductos/crearProducto").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/gestionProductos/modificarStockProducto/**").hasAnyAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/gestionProductos/modificarDestacadoProducto/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/v1/gestionProductos/eliminarProducto/**").hasAnyAuthority(Role.ADMIN.name())
 
                         .anyRequest().authenticated())

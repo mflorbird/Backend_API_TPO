@@ -34,6 +34,16 @@ public class GestionProductosController {
         }
     }
 
+    @PutMapping("/modificarDestacadoProducto/")
+    public ResponseEntity<?> modificarDestacadoProducto(@RequestParam("productoId") Long productoId, @RequestParam("destacado") boolean destacado) {
+        try{
+            gestionProductosService.modificarDestacadoProducto(productoId, destacado);
+            return ResponseEntity.ok().build();
+        }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @DeleteMapping ("/eliminarProducto/{productoId}")
     public void bajaProducto(@PathVariable("productoId") Long productoId){
         try{
