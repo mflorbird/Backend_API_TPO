@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 // aca hay que validar la informacion del mensaje.
@@ -18,7 +20,7 @@ public class CarritoController {
 
     @GetMapping // para tener todos los carritos
     public List<Carrito> getAllCarritos() {
-        return carritoService.findAll(); //->
+        return carritoService.findAll();
     }
 
     @GetMapping("/{id}")  // obtener carrito por id
@@ -38,12 +40,13 @@ public class CarritoController {
 
     @PostMapping("/{carritoId}/productos") // agrega producto al carrito
     public ResponseEntity<Carrito> addProductoToCarrito(@PathVariable Long carritoId, @RequestBody Producto producto, @RequestParam int cantidad) {
-        try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, producto, cantidad);
+       try {
+           Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, producto, cantidad);
             return ResponseEntity.ok(carrito);
-        } catch (SinStockException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+
     }
 
     @DeleteMapping("/{carritoId}/productos/{productoId}") // elimina producto del carrito

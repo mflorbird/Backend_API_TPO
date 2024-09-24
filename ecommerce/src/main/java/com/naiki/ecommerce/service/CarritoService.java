@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 //aca tiene que estar revisar el checkout . verificar que tenga stock
@@ -19,11 +20,27 @@ public class CarritoService{
     @Autowired // trae los repositorios
     private CarritoRepository carritoRepository;
 
+    public List<Carrito> findAll() {
+        return carritoRepository.findAll();
+    }
+
+    public Carrito findById(Long id) {
+        Optional<Carrito> carrito = carritoRepository.findById(id);
+        return carrito.orElse(null);
+    }
+
+    public Carrito save(Carrito carrito) {
+        return carritoRepository.save(carrito);
+    }
+
     @Autowired
     private ItemCarritoRepository itemCarritoRepository;
 
     @Autowired
     private ProductoRepository productoRepository;
+
+
+
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
     public Carrito agregarProductoAlCarrito(long carritoId, Producto producto, int cantidad) {
@@ -50,7 +67,7 @@ public class CarritoService{
         //pra isso recorre la lista itemcarrito .
         for (ItemCarrito item: carrito.getItems()){
             //si existe aumenta cantidad
-            if (item.getProducto().getId().equals(producto.getId())) {
+            if (item.getProducto().getId() == (producto.getId())) {
                 item.setCantidad(item.getCantidad() + cantidad);//si existe se actualiza la cant.
                 productoExistente = true;
                 break;
@@ -74,7 +91,7 @@ public class CarritoService{
         if (carritoOpt.isPresent()) {
             Carrito carrito = carritoOpt.get();
             //si el carro existe remueve el producto
-            carrito.getItems().removeIf(item->item.getProducto().getId().equals(productoId));
+            carrito.getItems().removeIf(item->item.getProducto().getId() == (productoId));
             //y recalcula el precio
             carrito.recalcularTotal();
             carritoRepository.save(carrito);

@@ -2,6 +2,7 @@ package com.naiki.ecommerce.repository.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,14 @@ public class Carrito {
     @JoinColumn(name = "user_id")
     private User usuario; // relaciona el carrito con el usuario
 
+    @Column
+    private LocalDateTime fechaCreacion; // la fecha para que la agarre mostrar perfil
+
+    // constr. para la fecha
+
+    public Carrito(){
+        this.fechaCreacion = LocalDateTime.now();
+    }
 
     //get y set
 
