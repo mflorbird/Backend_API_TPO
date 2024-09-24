@@ -11,6 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
+
+import static java.lang.Long.parseLong;
+
 // aca hay que validar la informacion del mensaje.
 @RestController //este es el que maneja las solicitudes https y devuelve JSON
 @RequestMapping("/api/v1/carritos") // esta es la ruta
@@ -40,18 +43,22 @@ public class CarritoController {
     }
 
     @PostMapping("/agregarProducto") // agrega producto al carrito
-    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody Long productoId, @RequestBody int cantidad, @RequestBody Long carritoId)  {
+    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest) {
+        Long carritoId = parseLong(productoRequest.getCarritoId());
+        Long productoId = parseLong(productoRequest.getProductoId());
         try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, cantidad);
+            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, productoRequest.getCantidad());
             return ResponseEntity.ok(carrito);
-        } catch (SinStockException e) {
+        } catch (SinStockException e)  {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
-
     }
 
     @DeleteMapping("/eliminarProducto") // elimina producto del carrito
-    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody Long productoId, @RequestBody Long carritoId, @RequestBody int cantidad) {
+    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody ProductoRequest productoRequest) {
+        Long carritoId = parseLong(productoRequest.getCarritoId());
+        Long productoId = parseLong(productoRequest.getProductoId());
+        int cantidad = productoRequest.getCantidad();
         carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
         return ResponseEntity.noContent().build();
     }
