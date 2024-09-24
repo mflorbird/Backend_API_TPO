@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -59,6 +60,9 @@ public class CatalogoProductosController {
         }
 
         if (token != null) {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
             String email = jwtService.extractUsername(token);
             catalogoProductosService.agregarProductoVisitado(email, productoId);
 
@@ -98,13 +102,17 @@ public class CatalogoProductosController {
 
 
     // Productos recientes vistos por el usuario
+
     @RequestMapping("/productosRecientes")
     public ResponseEntity<List<Producto>> getProductosRecientes(
-            @RequestHeader(value = "Authorization", required = false) String token)
+            @RequestHeader(value = "Authorization") String token)
     {
         if (token == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).strip();
+            }
             String email = jwtService.extractUsername(token);
             List<Producto> productos = catalogoProductosService.getProductosRecientes(email);
             return ResponseEntity.ok(productos);
