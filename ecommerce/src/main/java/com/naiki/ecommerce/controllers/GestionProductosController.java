@@ -15,7 +15,7 @@ public class GestionProductosController {
     private GestionProductosService gestionProductosService;
 
     @PostMapping ("/crearProducto")
-    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion,@RequestParam("foto") String foto, @RequestParam("destacado") String destacado, @RequestParam("estado") String estado, @RequestParam("precio") Double precio, @RequestParam("stock") int stock) {
+    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion,@RequestParam("foto") String foto, @RequestParam("destacado") boolean destacado, @RequestParam("estado") String estado, @RequestParam("precio") Double precio, @RequestParam("stock") int stock) {
         try{
             gestionProductosService.altaProducto(nombre, categoria, descripcion, foto, destacado,estado, precio,stock);
             return ResponseEntity.status(HttpStatus.CREATED).build();
