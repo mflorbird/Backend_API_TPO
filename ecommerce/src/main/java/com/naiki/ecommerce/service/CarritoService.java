@@ -49,8 +49,9 @@ public class CarritoService{
     }
 
     public Carrito createCarrito(String token) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+        String email = jwtService.extractUsername(jwt);
         Carrito carrito = new Carrito();
-        String email = jwtService.extractUsername(token);
         carrito.setUsuario(userRepository.findByEmail(email).orElse(null));
         carritoRepository.save(carrito);
         return carrito;
@@ -130,6 +131,9 @@ public class CarritoService{
         }
         return false;
 
+    }
+    public List<Carrito> obtenerCarritosPorUsuario(Long usuarioId) {
+        return carritoRepository.findByUsuarioId(usuarioId);
     }
 
 }

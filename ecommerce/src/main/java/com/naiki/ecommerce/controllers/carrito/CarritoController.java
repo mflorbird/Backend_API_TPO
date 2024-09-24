@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 // aca hay que validar la informacion del mensaje.
 @RestController //este es el que maneja las solicitudes https y devuelve JSON
-@RequestMapping("/api/carritos") // esta es la ruta
+@RequestMapping("/api/v1/carritos") // esta es la ruta
 public class CarritoController {
 
     @Autowired // para que el controller use los metodos de service

@@ -55,4 +55,8 @@ public class Carrito {
                 .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
                 .sum();
     }
+
+    public Object getFechaTransaccion() {
+        return fechaCreacion;
+    }
 }
