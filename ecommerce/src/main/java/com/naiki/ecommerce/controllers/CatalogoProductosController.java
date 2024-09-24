@@ -61,7 +61,7 @@ public class CatalogoProductosController {
 
         if (token != null) {
             if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
+                token = token.substring(7).strip();
             }
             String email = jwtService.extractUsername(token);
             catalogoProductosService.agregarProductoVisitado(email, productoId);
