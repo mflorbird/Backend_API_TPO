@@ -1,5 +1,4 @@
 package com.naiki.ecommerce.service;
-
 import com.naiki.ecommerce.controllers.config.JwtService;
 import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.CarritoRepository;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,15 +22,6 @@ import java.util.Optional;
 public class CarritoService{
     @Autowired // trae los repositorios
     private CarritoRepository carritoRepository;
-
-    public List<Carrito> findAll() {
-        return carritoRepository.findAll();
-    }
-
-    public Carrito findById(Long id) {
-        Optional<Carrito> carrito = carritoRepository.findById(id);
-        return carrito.orElse(null);
-    }
 
     public Carrito save(Carrito carrito) {
         return carritoRepository.save(carrito);
@@ -45,6 +36,18 @@ public class CarritoService{
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<Carrito> findAll() {
+        return carritoRepository.findAll();
+    }
+
+    public Carrito findById(Long id) {
+        Carrito carrito = carritoRepository.findById(id).orElse(null);
+        return carrito;
+    }
+
     public Carrito createCarrito(String token) {
         Carrito carrito = new Carrito();
         String email = jwtService.extractUsername(token);
@@ -52,6 +55,7 @@ public class CarritoService{
         carritoRepository.save(carrito);
         return carrito;
     }
+
 
     @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
     public Carrito agregarProductoAlCarrito(Long carritoId, Long productoId, int cantidad) throws SinStockException {

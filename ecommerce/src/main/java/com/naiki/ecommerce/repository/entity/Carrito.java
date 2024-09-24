@@ -31,39 +31,6 @@ public class Carrito {
         this.fechaCreacion = LocalDateTime.now();
     }
 
-    //get y set
-
-//    public long getId() {
-//        return id;
-//    }
-//
-//    public void setId(long id) {
-//        this.id = id;
-//    }
-//
-//    public List<ItemCarrito> getItems() {
-//        return items;
-//    }
-//
-//    public void setItems(List<ItemCarrito> items) {
-//        this.items = items;
-//    }
-//
-//    public double getTotalPrecio() {
-//        return totalPrecio;
-//    }
-//
-//    public void setTotalPrecio(double totalPrecio) {
-//        this.totalPrecio = totalPrecio;
-//    }
-//
-//    public User getUsuario() {
-//        return usuario;
-//    }
-//
-//    public void setUsuario(User usuario) {
-//        this.usuario = usuario;
-//    }
 
 //metodos
 

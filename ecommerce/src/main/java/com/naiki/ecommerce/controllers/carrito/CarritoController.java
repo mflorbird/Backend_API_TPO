@@ -1,5 +1,6 @@
 package com.naiki.ecommerce.controllers.carrito;
 
+import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.entity.*;
 import com.naiki.ecommerce.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,13 @@ public class CarritoController {
         return ResponseEntity.ok(carritoCreado);
     }
 
-    @PostMapping("/{carritoId}/productos") // agrega producto al carrito
-    public ResponseEntity<Carrito> addProductoToCarrito(@PathVariable Long carritoId, @RequestBody Producto producto, @RequestParam int cantidad) {
-       try {
-           Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, producto, cantidad);
+    @PostMapping("/agregarProducto") // agrega producto al carrito
+    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody Long productoId, @RequestBody int cantidad, @RequestBody Long carritoId)  {
+        try {
+            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, cantidad);
             return ResponseEntity.ok(carrito);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (SinStockException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
 
     }
