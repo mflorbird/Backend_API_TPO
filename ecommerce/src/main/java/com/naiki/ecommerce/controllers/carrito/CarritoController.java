@@ -62,4 +62,10 @@ public class CarritoController {
         carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/checkout/{id}")
+    public ResponseEntity<Void> realizarCheckout(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+        carritoService.realizarCheckout(id, token);
+        return ResponseEntity.noContent().build();
+    }
 }

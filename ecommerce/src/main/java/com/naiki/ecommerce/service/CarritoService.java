@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
-import java.util.Optional;
 
 //aca tiene que estar revisar el checkout . verificar que tenga stock
 
@@ -131,6 +130,22 @@ public class CarritoService{
         return false;
 
     }
+
+    public void realizarCheckout(Long carritoId, String token) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+        String email = jwtService.extractUsername(jwt);
+
+        Carrito carrito = carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado."));
+
+        if (!carrito.getUsuario().getEmail().equals(email)) {
+            throw new RuntimeException("Este carrito no pertenece al usuario autenticado.");
+        }
+
+        carrito.setEstado("cerrado");
+
+        carritoRepository.save(carrito);
+    }
+
     public List<Carrito> obtenerCarritosPorUsuario(Long usuarioId) {
         return carritoRepository.findByUsuarioId(usuarioId);
     }
