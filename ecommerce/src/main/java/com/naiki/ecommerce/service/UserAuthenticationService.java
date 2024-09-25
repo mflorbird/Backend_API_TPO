@@ -1,5 +1,7 @@
 package com.naiki.ecommerce.service;
 
+import com.naiki.ecommerce.exception.UserAlreadyExistsException;
+import com.naiki.ecommerce.exception.UserNotFoundException;
 import com.naiki.ecommerce.repository.UserRepository;
 import com.naiki.ecommerce.controllers.config.JwtService;
 import com.naiki.ecommerce.controllers.auth.*;
@@ -23,6 +25,9 @@ public class UserAuthenticationService {
 
 
     public AuthResponse register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserAlreadyExistsException("El usuario con el email " + request.getEmail() + " ya existe.");
+        }
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastName(request.getLastname())
@@ -46,7 +51,7 @@ public class UserAuthenticationService {
                         request.getEmail(),
                         request.getPassword()));
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+                .orElseThrow(()-> new UserNotFoundException("El usuario con el email " + request.getEmail() + " no existe."));;
         var jwtToken = jwtService.generateToken(user);
         return AuthResponse.builder()
                 .accessToken(jwtToken)
