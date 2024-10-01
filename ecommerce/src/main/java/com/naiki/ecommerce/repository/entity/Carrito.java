@@ -26,7 +26,7 @@ public class Carrito {
     private LocalDateTime fechaCreacion; // la fecha para que la agarre mostrar perfil
 
     @Column
-    private String estado = "abierto";
+    private String estado;
 
     // constr. para la fecha
 

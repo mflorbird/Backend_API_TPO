@@ -49,7 +49,7 @@ public class CarritoController {
         try {
             Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, productoRequest.getCantidad());
             return ResponseEntity.ok(carrito);
-        } catch (SinStockException e)  {
+        } catch (SinStockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
     }
@@ -63,9 +63,14 @@ public class CarritoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/checkout/{id}")
-    public ResponseEntity<Void> realizarCheckout(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-        carritoService.realizarCheckout(id, token);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/vaciarCarrito")
+    public ResponseEntity<Void> vaciarCarrito(@PathVariable Long carritoId) {
+        boolean resultado = carritoService.vaciarCarrito(carritoId);
+        if (resultado) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
+
