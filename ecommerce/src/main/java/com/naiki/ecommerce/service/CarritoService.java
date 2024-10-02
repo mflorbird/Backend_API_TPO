@@ -19,7 +19,7 @@ import java.util.Optional;
 //aca tiene que estar revisar el checkout . verificar que tenga stock
 
 @Service // para que spring la pueda poner en otraspartes.
-public class CarritoService{
+public class CarritoService {
     @Autowired // trae los repositorios
     private CarritoRepository carritoRepository;
 
@@ -56,30 +56,41 @@ public class CarritoService{
         return carrito;
     }
 
+    @Transactional // ATOMICA
+    public Carrito agregarProductoAlCarrito(String token, Long productoId, int cantidad) throws SinStockException {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7): token;
+        String email = jwtService.extractUsername(jwt);
 
-    @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
-    public Carrito agregarProductoAlCarrito(Long carritoId, Long productoId, int cantidad) throws SinStockException {
-        //para buscar el carrito por id
-        //busca el carrito por ID en la BD usando carritoReposito.
-        //devuelve el optional<carrito> que puede tener o no dato.
-        Carrito carrito = carritoRepository.findById(carritoId).orElse(null);
-        if (carrito == null) {
-            return null;
-        }
+        //buscar usuario x mail. para obtener el id y no ingresarlo
+        long usuarioId = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"))
+                .getId();
+
+
+        //buscar el producto en la base, si no existe devuelve null [aca cambiar null por excepcion]
         Producto producto = productoRepository.findById(productoId).orElse(null);
-        if (producto == null) {
-            return null;
+        if (producto == null){
+            throw new RuntimeException("Producto no encontrado");
         }
 
-        //verificar si hay stock
-        if (producto.getStock() < cantidad)  {
-            throw new SinStockException("No hay suficiente stock para el producto");
+        // ahora ver si hay stock
+        if(producto.getStock()<cantidad){
+            throw new SinStockException("No hay suficiente stock para el producto seleccionado");
         }
 
-        //modificar stock
-        producto.setStock(producto.getStock() - cantidad);
-        productoRepository.save(producto);
+        //buscar carrito del usuario. si no lo encuentra lo crea.
+        List<Carrito> carritos = carritoRepository.findByUsuarioId(usuarioId);
+        Carrito carrito;
 
+        //si el usuario no tiene carrito, crearlo
+        if (carritos.isEmpty()) {
+            carrito = createCarrito(token);
+        }else {
+            carrito = carritos.get(0); //el usuario solo tiene un carrito, asi que obtenemos el primero
+        }
+
+
+        //ver si el producto ya esta en el carrito
         //Agregar o actualizar el item del carrito
         for (ItemCarrito item: carrito.getItems()){
             if (item.getProducto().getId() == productoId) {
@@ -97,6 +108,48 @@ public class CarritoService{
         return carrito;
     }
 
+
+
+//    @Transactional //si ocurre una excepcion durante la ejecucion , la transaccion se revierte. ATOMICIDAD.
+//    public Carrito agregarProductoAlCarrito(Long carritoId, Long productoId, int cantidad) throws SinStockException {
+//        //para buscar el carrito por id
+//        //busca el carrito por ID en la BD usando carritoReposito.
+//        //devuelve el optional<carrito> que puede tener o no dato.
+//        Carrito carrito = carritoRepository.findById(carritoId).orElse(null);
+//        if (carrito == null) {
+//            return null;
+//        }
+//        Producto producto = productoRepository.findById(productoId).orElse(null);
+//        if (producto == null) {
+//            return null;
+//        }
+//
+//        //verificar si hay stock
+//        if (producto.getStock() < cantidad)  {
+//            throw new SinStockException("No hay suficiente stock para el producto");
+//        }
+//
+//        //modificar stock // ESTA PARTE LA TENEMOS QUE DEJAR EN EL CHECKOUT
+//        producto.setStock(producto.getStock() - cantidad);
+//        productoRepository.save(producto);
+//
+//        //Agregar o actualizar el item del carrito
+//        for (ItemCarrito item: carrito.getItems()){
+//            if (item.getProducto().getId() == productoId) {
+//                item.setCantidad(item.getCantidad() + cantidad);
+//                carrito.recalcularTotal();
+//                carritoRepository.save(carrito);
+//                return carrito;
+//            }
+//        }
+//        ItemCarrito newItem = new ItemCarrito(producto, cantidad);
+//        newItem.setCarrito(carrito);
+//        carrito.getItems().add(newItem);
+//        carrito.recalcularTotal();
+//        carritoRepository.save(carrito);
+//        return carrito;
+//    }
+//
 
     @Transactional
     public boolean eliminarProductoDelCarrito(Long carritoId, Long productoId, int cantidad) {

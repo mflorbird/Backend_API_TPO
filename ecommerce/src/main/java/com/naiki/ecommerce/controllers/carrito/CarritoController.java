@@ -43,11 +43,10 @@ public class CarritoController {
     }
 
     @PostMapping("/agregarProducto") // agrega producto al carrito
-    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest) {
-        Long carritoId = parseLong(productoRequest.getCarritoId());
+    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest, @RequestHeader("Authorization") String token) {
         Long productoId = parseLong(productoRequest.getProductoId());
         try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(carritoId, productoId, productoRequest.getCantidad());
+            Carrito carrito = carritoService.agregarProductoAlCarrito(token, productoId, productoRequest.getCantidad());
             return ResponseEntity.ok(carrito);
         } catch (SinStockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
