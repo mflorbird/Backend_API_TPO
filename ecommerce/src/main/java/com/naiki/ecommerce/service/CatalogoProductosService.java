@@ -1,9 +1,12 @@
 package com.naiki.ecommerce.service;
 
+import com.naiki.ecommerce.repository.ProductoFavoritoRepository;
 import com.naiki.ecommerce.repository.ProductoRepository;
 import com.naiki.ecommerce.repository.ProductoVisitadoRepository;
 import com.naiki.ecommerce.repository.UserRepository;
+import com.naiki.ecommerce.repository.entity.User;
 import com.naiki.ecommerce.repository.entity.Producto;
+import com.naiki.ecommerce.repository.entity.ProductoFavorito;
 import com.naiki.ecommerce.repository.entity.ProductoVisitado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class CatalogoProductosService {
 
     @Autowired
     private ProductoVisitadoRepository productoVisitadoRepository;
+
+    @Autowired
+    private ProductoFavoritoRepository productoFavoritoRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -56,15 +62,6 @@ public class CatalogoProductosService {
     }
 
 
-    // Agregar un producto al carrito (Ver si se superpone)
-    public String agregarProductoAlCarrito(String productoId) {
-        return "Agregar un producto al carrito: " + productoId;
-    }
-
-    // Agregar a Favoritos del usuario
-    public String agregarProductoAFavoritos(String userId, String productoId) {
-        return "Agregar a Favoritos del usuario: " + userId + " - " + productoId;
-    }
 
     // Productos recientes vistos por el usuario
     public List<Producto> getProductosRecientes(String email) {
@@ -93,4 +90,44 @@ public class CatalogoProductosService {
         productoVisitadoRepository.save(productoVisitado);
     }
 
+    // Agregar un producto a la lista de favoritos
+    public String agregarProductoFavorito(String email, Long productoId) {
+        Producto producto = productoRepository.findById(productoId).orElseThrow();
+        User user = userRepository.findByEmail(email).orElseThrow();
+        ProductoFavorito productoFavorito = productoFavoritoRepository.findByUserAndProducto(user, producto);
+
+        if (productoFavorito != null) {
+            productoFavorito.setFechaFavorito(new Date());
+            productoFavoritoRepository.save(productoFavorito);
+            return "Producto ya estaba en favoritos";
+        }
+        productoFavorito = new ProductoFavorito();
+        productoFavorito.setUser(user);
+        productoFavorito.setProducto(producto);
+        productoFavorito.setFechaFavorito(new Date());
+        productoFavoritoRepository.save(productoFavorito);
+        return "Producto agregado a favoritos";
+    }
+
+    // Eliminar un producto de la lista de favoritos
+    public String eliminarProductoFavorito(String email, Long productoId) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        Producto producto = productoRepository.getOne(productoId);
+        ProductoFavorito productoFavorito = productoFavoritoRepository.findByUserAndProducto(user, producto);
+        if (productoFavorito != null) {
+            productoFavoritoRepository.delete(productoFavorito);
+            return "Producto eliminado de favoritos";
+        }
+        return "Producto no estaba en favoritos";
+    }
+
+    public List<Producto> getProductosFavoritos(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        List<ProductoFavorito> productosFavoritos = productoFavoritoRepository.findByUserOrderByFechaFavoritoDesc(user);
+        List<Producto> productos = new ArrayList<>();
+        for (ProductoFavorito productoFavorito : productosFavoritos) {
+            productos.add(productoFavorito.getProducto());
+        }
+        return productos;
+    }
 }

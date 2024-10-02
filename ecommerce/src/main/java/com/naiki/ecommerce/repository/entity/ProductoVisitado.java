@@ -16,7 +16,7 @@ public class ProductoVisitado {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne

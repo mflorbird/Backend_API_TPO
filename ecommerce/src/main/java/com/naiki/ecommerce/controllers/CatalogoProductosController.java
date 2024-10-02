@@ -85,25 +85,56 @@ public class CatalogoProductosController {
     }
 
 
-    // Agregar un producto al carrito (Ver si se superpone)
-    @RequestMapping("/agregarProductoAlCarrito/{productoId}")
-    public String agregarProductoAlCarrito(@RequestParam("productoId") String productoId) {
-        return catalogoProductosService.agregarProductoAlCarrito(productoId);
-    }
-
-
-
     // Agregar a Favoritos del usuario
-    @RequestMapping("/agregarProductoAFavoritos/{userId}/{productoId}")
-    public String agregarProductoAFavoritos(@RequestParam("userId") String userId, @RequestParam("productoId") String productoId) {
-        return catalogoProductosService.agregarProductoAFavoritos(userId, productoId);
+    @PutMapping("/agregarProductoAFavoritos/")
+    public ResponseEntity<String> agregarProductoAFavoritos(@RequestHeader(value = "Authorization") String token,
+                                            @RequestParam("productoId") Long productoId) {
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).strip();
+            }
+            String email = jwtService.extractUsername(token);
+            String res = catalogoProductosService.agregarProductoFavorito(email, productoId);
+            return ResponseEntity.ok(res);
+        }
     }
 
+    @DeleteMapping("/eliminarProductoFavorito/")
+    public ResponseEntity<String> eliminarProductoFavorito(@RequestHeader(value = "Authorization") String token,
+                                            @RequestParam("productoId") Long productoId) {
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).strip();
+            }
+            String email = jwtService.extractUsername(token);
+            String res = catalogoProductosService.eliminarProductoFavorito(email, productoId);
+            return ResponseEntity.ok(res);
+        }
+    }
 
+    @GetMapping("/productosFavoritos")
+    public ResponseEntity<List<Producto>> getProductosFavoritos(
+            @RequestHeader(value = "Authorization") String token)
+    {
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7).strip();
+            }
+            String email = jwtService.extractUsername(token);
+            List<Producto> productos = catalogoProductosService.getProductosFavoritos(email);
+            return ResponseEntity.ok(productos);
+        }
+    }
 
     // Productos recientes vistos por el usuario
 
-    @RequestMapping("/productosRecientes")
+    @GetMapping("/productosRecientes")
     public ResponseEntity<List<Producto>> getProductosRecientes(
             @RequestHeader(value = "Authorization") String token)
     {
