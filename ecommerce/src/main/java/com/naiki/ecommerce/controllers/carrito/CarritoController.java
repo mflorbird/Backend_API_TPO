@@ -71,5 +71,24 @@ public class CarritoController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/obtenerCarrito")
+    public ResponseEntity<?> obtenerCarrito(@RequestHeader("Authorization") String token){
+        System.out.println("Token recibido: " + token); // Agregar log para saber si recibe ok.
+        Carrito carrito = carritoService.obtenerCarritoUsuario(token);
+
+        //si el carrito es null, no hay carrito creado para el usuario
+        if (carrito == null){
+            return ResponseEntity.ok("Aun no tenes productos en el carrito (acá no existe porque nunca se agrego un producto)");
+        }
+
+        //si el carrito no tiene productos
+        if (carrito.getItems()== null || carrito.getItems().isEmpty()){
+            return ResponseEntity.ok("Aún no tenes productos en el carrito. (acá existe pero no tiene productos)");
+        }
+
+        //si el carrito tiene producto, devuelve elcarrito completo
+        return ResponseEntity.ok(carrito);
+    }
 }
 
