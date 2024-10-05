@@ -158,20 +158,52 @@ public class CarritoService {
         return true;
     }
 
-    public void realizarCheckout(Long carritoId, String token) {
-        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+    @Transactional
+    public Carrito aplicarDescientoAlCarrito(String token, String codigoDescuento){
+        String jwt = token.startsWith("Bearer ") ? token.substring(7): token;
         String email = jwtService.extractUsername(jwt);
 
-        Carrito carrito = carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado."));
+        //validar codigo
+        if (!"NAIKI10".equalsIgnoreCase(codigoDescuento)){
+            throw new IllegalArgumentException("Código de descuento invalido");
+        }
+        //buscar carrito de usuario
+        long usuarioId = userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"))
+                .getId();
 
-        if (!carrito.getUsuario().getEmail().equals(email)) {
-            throw new RuntimeException("Este carrito no pertenece al usuario autenticado.");
+        List<Carrito> carritos = carritoRepository.findByUsuarioId(usuarioId);
+        if(carritos.isEmpty()){
+            throw new RuntimeException("No tenes un carrito activo");
         }
 
-        carrito.setEstado("cerrado");
+        Carrito carrito = carritos.get(0);
 
+        //Descuento %10
+        double totalOriginal = carrito.getTotalPrecio();
+        double descuento = totalOriginal*0.10;
+        double totalConDescuento = totalOriginal-descuento;
+
+        carrito.setTotalPrecio(totalConDescuento);
         carritoRepository.save(carrito);
+
+        return carrito;
     }
+
+//        public void realizarCheckout(Long carritoId, String token) {
+//        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+//        String email = jwtService.extractUsername(jwt);
+//
+//        Carrito carrito = carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado."));
+//
+//        if (!carrito.getUsuario().getEmail().equals(email)) {
+//            throw new RuntimeException("Este carrito no pertenece al usuario autenticado.");
+//        }
+//
+//        carrito.setEstado("cerrado");
+//
+//        carritoRepository.save(carrito);
+//    }
 
 
 
