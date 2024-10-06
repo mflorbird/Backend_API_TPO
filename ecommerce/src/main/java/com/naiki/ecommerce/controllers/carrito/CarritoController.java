@@ -3,6 +3,7 @@ package com.naiki.ecommerce.controllers.carrito;
 import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.entity.*;
 import com.naiki.ecommerce.service.*;
+import com.naiki.ecommerce.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +90,19 @@ public class CarritoController {
 
         //si el carrito tiene producto, devuelve elcarrito completo
         return ResponseEntity.ok(carrito);
+    }
+
+    @PostMapping("/aplicarDescuento")
+    public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest, @RequestHeader("Autorization") String token){
+        try {
+            Carrito carritoConDescuento = carritoService.aplicarDescientoAlCarrito(token, descuentoRequest.getCodigoDescuento());
+            double descuentoAplicado = carritoConDescuento.getTotalOriginal()*carritoConDescuento.getPorcentajeDescuentoAplicado();
+            return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal()+", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
+         }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+         }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
 

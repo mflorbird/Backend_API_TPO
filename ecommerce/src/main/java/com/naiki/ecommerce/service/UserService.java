@@ -4,7 +4,7 @@ import com.naiki.ecommerce.controllers.user.UserData;
 import com.naiki.ecommerce.repository.UserRepository;
 import com.naiki.ecommerce.repository.entity.Carrito;
 import com.naiki.ecommerce.repository.entity.User;
-import dto.CarritoInfo;
+import com.naiki.ecommerce.dto.CarritoInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

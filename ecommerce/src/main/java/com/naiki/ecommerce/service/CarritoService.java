@@ -178,13 +178,7 @@ public class CarritoService {
         }
 
         Carrito carrito = carritos.get(0);
-
-        //Descuento %10
-        double totalOriginal = carrito.getTotalPrecio();
-        double descuento = totalOriginal*0.10;
-        double totalConDescuento = totalOriginal-descuento;
-
-        carrito.setTotalPrecio(totalConDescuento);
+        carrito.aplicarDescuento(codigoDescuento, 0.10); // aca reutilizo y aplico el 10%
         carritoRepository.save(carrito);
 
         return carrito;

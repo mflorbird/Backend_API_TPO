@@ -1,6 +1,6 @@
 package com.naiki.ecommerce.controllers.user;
 
-import dto.CarritoInfo;
+import com.naiki.ecommerce.dto.CarritoInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

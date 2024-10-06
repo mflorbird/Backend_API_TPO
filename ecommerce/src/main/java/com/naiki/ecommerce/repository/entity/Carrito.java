@@ -28,6 +28,15 @@ public class Carrito {
     @Column
     private String estado;
 
+    @Column
+    private String codigoDescuento;
+
+    @Column
+    private double porcentajeDescuentoAplicado = 0.0;
+
+    @Column
+    private double totalOriginal;
+
     // constr. para la fecha
 
     public Carrito(){
@@ -53,10 +62,23 @@ public class Carrito {
     }
 
     public void recalcularTotal() {
-        this.totalPrecio = items.stream() //stm para aplicar operaciones
+        this.totalOriginal = items.stream() //stm para aplicar operaciones
                 //el lambda toma el item y para cada item calcula el valor.
                 .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
                 .sum();
+        this.totalPrecio = totalOriginal;
+
+        //agrego el descuento si tiene
+        if (porcentajeDescuentoAplicado>0){
+            this.totalPrecio=this.totalPrecio - (totalOriginal * porcentajeDescuentoAplicado);
+        }
+    }
+
+    //metodo para codigo descuento
+    public void aplicarDescuento(String codigoDescuento, double porcentajeDescuento){
+        this.codigoDescuento=codigoDescuento;
+        this.porcentajeDescuentoAplicado=porcentajeDescuento;
+        recalcularTotal();
     }
 
     public Object getFechaTransaccion() {
