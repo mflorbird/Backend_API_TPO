@@ -9,6 +9,8 @@ import com.naiki.ecommerce.repository.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,6 @@ public class UserAuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -46,12 +47,13 @@ public class UserAuthenticationService {
     }
 
     public AuthResponse authenticate(AuthRequest request) {
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(()-> new UserNotFoundException("El usuario con el email " + request.getEmail() + " no existe."));;
+                .orElseThrow(() -> new UserNotFoundException("El usuario con el email " + request.getEmail() + " no existe."));
         var jwtToken = jwtService.generateToken(user);
         return AuthResponse.builder()
                 .accessToken(jwtToken)

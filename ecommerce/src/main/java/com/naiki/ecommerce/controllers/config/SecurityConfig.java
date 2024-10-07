@@ -27,17 +27,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/authenticate/**").permitAll()
-                        .requestMatchers("/api/v1/gestionCatalogo/**").permitAll()
-                        .requestMatchers("/api/v1/carritos/**").authenticated()
-                        .requestMatchers("/api/v1/user/profile").authenticated()
-                        .requestMatchers("/api/v1/api/carritos/**").authenticated()
-                        .requestMatchers("/api/v1/user/**").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/gestionProductos/crearProducto").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/gestionProductos/modificarStockProducto/**").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/gestionProductos/modificarDestacadoProducto/**").hasAnyAuthority(Role.ADMIN.name())
-                        .requestMatchers("/api/v1/gestionProductos/eliminarProducto/**").hasAnyAuthority(Role.ADMIN.name())
-
+                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/authenticate/**", "/api/v1/gestionCatalogo/**").permitAll()
+//                        .requestMatchers("/api/v1/carritos/**","/api/v1/user/profile").authenticated()
+                        .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/crearProducto","/api/v1/gestionProductos/modificarStockProducto/**",
+                                "/api/v1/gestionProductos/modificarDestacadoProducto/**",
+                                "/api/v1/gestionProductos/eliminarProducto/**").hasAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

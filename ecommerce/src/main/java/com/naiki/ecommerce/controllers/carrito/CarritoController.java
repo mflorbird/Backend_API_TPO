@@ -39,7 +39,7 @@ public class CarritoController {
 
     @PostMapping("/create") // crea un carrito
     public ResponseEntity<Carrito> createCarrito(@RequestHeader("Authorization") String token) {
-        Carrito carritoCreado = carritoService.createCarrito(token);
+        Carrito carritoCreado = carritoService.createCarrito();
         return ResponseEntity.ok(carritoCreado);
     }
 
@@ -47,7 +47,7 @@ public class CarritoController {
     public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest, @RequestHeader("Authorization") String token) {
         Long productoId = parseLong(productoRequest.getProductoId());
         try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(token, productoId, productoRequest.getCantidad());
+            Carrito carrito = carritoService.agregarProductoAlCarrito(productoId, productoRequest.getCantidad());
             return ResponseEntity.ok(carrito);
         } catch (SinStockException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
@@ -76,7 +76,7 @@ public class CarritoController {
     @GetMapping("/obtenerCarrito")
     public ResponseEntity<?> obtenerCarrito(@RequestHeader("Authorization") String token){
         System.out.println("Token recibido: " + token); // Agregar log para saber si recibe ok.
-        Carrito carrito = carritoService.obtenerCarritoUsuario(token);
+        Carrito carrito = carritoService.obtenerCarritoUsuario();
 
         //si el carrito es null, no hay carrito creado para el usuario
         if (carrito == null){
@@ -95,7 +95,7 @@ public class CarritoController {
     @PostMapping("/aplicarDescuento")
     public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest, @RequestHeader("Autorization") String token){
         try {
-            Carrito carritoConDescuento = carritoService.aplicarDescientoAlCarrito(token, descuentoRequest.getCodigoDescuento());
+            Carrito carritoConDescuento = carritoService.aplicarDescientoAlCarrito(descuentoRequest.getCodigoDescuento());
             double descuentoAplicado = carritoConDescuento.getTotalOriginal()*carritoConDescuento.getPorcentajeDescuentoAplicado();
             return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal()+", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
          }catch (IllegalArgumentException e){
@@ -108,7 +108,7 @@ public class CarritoController {
     @PostMapping("/realizarCheckout")
     public ResponseEntity<?> realizarCheckout (@RequestHeader("Authorization") String token) {
         try {
-            carritoService.realizarCheckout(token);
+            carritoService.realizarCheckout();
             return ResponseEntity.ok("Checkout realizado con exito");
         } catch (SinStockException e) {
             //si no hay stock devolver el mensaje del servicio

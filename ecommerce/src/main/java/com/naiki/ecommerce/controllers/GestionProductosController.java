@@ -1,5 +1,6 @@
 package com.naiki.ecommerce.controllers;
 
+import com.naiki.ecommerce.dto.ProductoDTO;
 import com.naiki.ecommerce.service.GestionProductosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,16 @@ public class GestionProductosController {
     private GestionProductosService gestionProductosService;
 
     @PostMapping ("/crearProducto")
-    public ResponseEntity<?> altaProducto(@RequestParam("nombre") String nombre, @RequestParam("categoria") String categoria, @RequestParam("descripcion") String descripcion,@RequestParam("foto") String foto, @RequestParam("destacado") boolean destacado, @RequestParam("estado") String estado, @RequestParam("precio") Double precio, @RequestParam("stock") int stock) {
+    public ResponseEntity<?> altaProducto(@RequestBody ProductoDTO productoDTO) {
         try{
-            gestionProductosService.altaProducto(nombre, categoria, descripcion, foto, destacado,estado, precio,stock);
+            gestionProductosService.altaProducto(  productoDTO.getNombre(),
+                    productoDTO.getCategoria(),
+                    productoDTO.getDescripcion(),
+                    productoDTO.getFoto(),
+                    productoDTO.isDestacado(),
+                    productoDTO.getEstado(),
+                    productoDTO.getPrecio(),
+                    productoDTO.getStock() );
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
