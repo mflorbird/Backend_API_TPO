@@ -58,23 +58,23 @@ public class CarritoService {
 
     @Transactional // ATOMICA
     public Carrito agregarProductoAlCarrito(String token, Long productoId, int cantidad) throws SinStockException {
-        String jwt = token.startsWith("Bearer ") ? token.substring(7): token;
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
         String email = jwtService.extractUsername(jwt);
 
         //buscar usuario x mail. para obtener el id y no ingresarlo
         long usuarioId = userRepository.findByEmail(email)
-                .orElseThrow(()-> new RuntimeException("Usuario no encontrado"))
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
                 .getId();
 
 
         //buscar el producto en la base, si no existe devuelve null [aca cambiar null por excepcion]
         Producto producto = productoRepository.findById(productoId).orElse(null);
-        if (producto == null){
+        if (producto == null) {
             throw new RuntimeException("Producto no encontrado");
         }
 
         // ahora ver si hay stock
-        if(producto.getStock()<cantidad){
+        if (producto.getStock() < cantidad) {
             throw new SinStockException("No hay suficiente stock para el producto seleccionado");
         }
 
@@ -85,14 +85,14 @@ public class CarritoService {
         //si el usuario no tiene carrito, crearlo
         if (carritos.isEmpty()) {
             carrito = createCarrito(token);
-        }else {
+        } else {
             carrito = carritos.get(0); //el usuario solo tiene un carrito, asi que obtenemos el primero
         }
 
 
         //ver si el producto ya esta en el carrito
         //Agregar o actualizar el item del carrito
-        for (ItemCarrito item: carrito.getItems()){
+        for (ItemCarrito item : carrito.getItems()) {
             if (item.getProducto().getId() == productoId) {
                 item.setCantidad(item.getCantidad() + cantidad);
                 carrito.recalcularTotal();
@@ -107,7 +107,6 @@ public class CarritoService {
         carritoRepository.save(carrito);
         return carrito;
     }
-
 
     @Transactional
     public boolean eliminarProductoDelCarrito(Long carritoId, Long productoId, int cantidad) {
@@ -126,7 +125,7 @@ public class CarritoService {
             return false;
         }
         //busca item
-        for (ItemCarrito item: carrito.getItems()) {
+        for (ItemCarrito item : carrito.getItems()) {
             if (item.getProducto().getId() == productoId) {
                 item.setCantidad(item.getCantidad() - cantidad);
                 if (item.getCantidad() <= 0) {
@@ -159,6 +158,43 @@ public class CarritoService {
     }
 
     @Transactional
+    public void realizarCheckout (String token) throws SinStockException {
+        //extraer mail
+        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
+        String email = jwtService.extractUsername(jwt);
+        //obtener el usuario x mail
+        long usuarioId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
+                .getId();
+        //buscar el carrito acivo
+        List<Carrito> carritos = carritoRepository.findByUsuarioId(usuarioId);
+        if (carritos.isEmpty()) {
+            throw new RuntimeException("No tienes un carrito activo");
+        }
+
+        Carrito carrito = carritos.get(0);
+
+        //verificar stock de los prod. que tiene el carrito
+        for (ItemCarrito item : carrito.getItems()) {
+            Producto producto = item.getProducto();
+            if (producto.getStock() < item.getCantidad()) {
+                throw new SinStockException("No hay suficiente stock para el producto:" + producto.getNombre());
+            }
+        }
+
+        //Generar la baja del stock
+        for (ItemCarrito item : carrito.getItems()) {
+            Producto producto = item.getProducto();
+            producto.setStock(producto.getStock() - item.getCantidad());
+            productoRepository.save(producto);
+        }
+
+        //vaciar carrito
+        carrito.vaciarCarrito();
+        carritoRepository.save(carrito);
+    }
+
+    @Transactional
     public Carrito aplicarDescientoAlCarrito(String token, String codigoDescuento){
         String jwt = token.startsWith("Bearer ") ? token.substring(7): token;
         String email = jwtService.extractUsername(jwt);
@@ -184,27 +220,9 @@ public class CarritoService {
         return carrito;
     }
 
-//        public void realizarCheckout(Long carritoId, String token) {
-//        String jwt = token.startsWith("Bearer ") ? token.substring(7) : token;
-//        String email = jwtService.extractUsername(jwt);
-//
-//        Carrito carrito = carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado."));
-//
-//        if (!carrito.getUsuario().getEmail().equals(email)) {
-//            throw new RuntimeException("Este carrito no pertenece al usuario autenticado.");
-//        }
-//
-//        carrito.setEstado("cerrado");
-//
-//        carritoRepository.save(carrito);
-//    }
-
-
-
     public List<Carrito> obtenerCarritosPorUsuario(Long usuarioId) {
         return carritoRepository.findByUsuarioId(usuarioId);
     }
-
 
     public Carrito obtenerCarritoUsuario(String token){
         String jwt = token.startsWith("Bearer ") ? token.substring(7): token;
@@ -234,3 +252,4 @@ public class CarritoService {
         return carrito;
     }
 }
+
