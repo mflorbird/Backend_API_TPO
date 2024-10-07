@@ -95,7 +95,7 @@ public class CarritoController {
     @PostMapping("/aplicarDescuento")
     public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest, @RequestHeader("Autorization") String token){
         try {
-            Carrito carritoConDescuento = carritoService.aplicarDescientoAlCarrito(descuentoRequest.getCodigoDescuento());
+            Carrito carritoConDescuento = carritoService.aplicarDescuentoAlCarrito(descuentoRequest.getCodigoDescuento());
             double descuentoAplicado = carritoConDescuento.getTotalOriginal()*carritoConDescuento.getPorcentajeDescuentoAplicado();
             return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal()+", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
          }catch (IllegalArgumentException e){

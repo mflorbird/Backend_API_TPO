@@ -207,7 +207,7 @@ public class CarritoService {
     }
 
     @Transactional
-    public Carrito aplicarDescientoAlCarrito(String codigoDescuento){
+    public Carrito aplicarDescuentoAlCarrito(String codigoDescuento){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("Usuario no autenticado");
