@@ -104,5 +104,19 @@ public class CarritoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PostMapping("/realizarCheckout")
+    public ResponseEntity<?> realizarCheckout (@RequestHeader("Authorization") String token) {
+        try {
+            carritoService.realizarCheckout(token);
+            return ResponseEntity.ok("Checkout realizado con exito");
+        } catch (SinStockException e) {
+            //si no hay stock devolver el mensaje del servicio
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (RuntimeException e) {
+            //cualquier otro error ///// revisar control de errores
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }
 
