@@ -28,13 +28,13 @@ public class CatalogoProductosController {
     }
 
     // Productos destacados
-    @GetMapping("/productosDestacados") //tested ok
+    @GetMapping("/productos/destacados") //tested ok
     public ResponseEntity<?> getProductosDestacados() {
         return ResponseEntity.ok(catalogoProductosService.getProductosDestacados());
     }
 
     // Productos por categoria
-    @GetMapping("/productosPorCategoria/{categoria}") //tested ok
+    @GetMapping("/productos/categoria/{categoria}") //tested ok
     public ResponseEntity<List<Producto>> getProductosPorCategoria(@PathVariable("categoria") String categoria) {
         List<Producto> productos = catalogoProductosService.getProductosPorCategoria(categoria);
         if (productos == null || productos.isEmpty()) {
@@ -45,7 +45,7 @@ public class CatalogoProductosController {
     }
 
     // Detalle de un producto
-    @GetMapping("/detalleProducto/{productoId}") //tested ok
+    @GetMapping("/productos/{productoId}") //tested ok
     public ResponseEntity<Producto> getDetalleProducto(@PathVariable("productoId") Long productoId) {
         Producto producto = catalogoProductosService.getDetalleProducto(productoId);
 
@@ -64,7 +64,7 @@ public class CatalogoProductosController {
     }
 
     // Revisar stock de un producto
-    @GetMapping("/stockProducto/{productoId}") //tested ok
+    @GetMapping("/productos/{productoId}/stock") //tested ok
     public ResponseEntity<?> getStockProducto(@PathVariable("productoId") Long productoId) {
         try {
             int stock = catalogoProductosService.getStockProducto(productoId);
@@ -76,8 +76,8 @@ public class CatalogoProductosController {
     }
 
     // Agregar a Favoritos del usuario
-    @PutMapping("/agregarProductoAFavoritos/")
-    public ResponseEntity<String> agregarProductoAFavoritos(@RequestParam("productoId") Long productoId) {
+    @PutMapping("/productos/favoritos/{productoId}")
+    public ResponseEntity<String> agregarProductoAFavoritos(@PathVariable("productoId") Long productoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
@@ -88,8 +88,8 @@ public class CatalogoProductosController {
         }
     }
 
-    @DeleteMapping("/eliminarProductoFavorito/")
-    public ResponseEntity<String> eliminarProductoFavorito(@RequestParam("productoId") Long productoId) {
+    @DeleteMapping("/productos/favoritos/{productoId}")
+    public ResponseEntity<String> eliminarProductoFavorito(@PathVariable("productoId") Long productoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             String email = authentication.getName();
@@ -100,7 +100,7 @@ public class CatalogoProductosController {
         }
     }
 
-    @GetMapping("/productosFavoritos")
+    @GetMapping("/productos/favoritos")
     public ResponseEntity<List<Producto>> getProductosFavoritos() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
@@ -113,7 +113,7 @@ public class CatalogoProductosController {
     }
 
     // Productos recientes vistos por el usuario
-    @GetMapping("/productosRecientes")
+    @GetMapping("/productos/recientes")
     public ResponseEntity<List<Producto>> getProductosRecientes() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
