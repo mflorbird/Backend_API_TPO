@@ -27,7 +27,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/authenticate/**", "/api/v1/gestionCatalogo/**").permitAll()
+                .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/authenticate/**", "/api/v1/gestionCatalogo/productos/",
+                                "/api/v1/gestionCatalogo/productos/destacados","/api/v1/gestionCatalogo/productos/categoria/*",
+                                "/api/v1/gestionCatalogo/productos/{productoId}/stock").permitAll()
 //                        .requestMatchers("/api/v1/carritos/**","/api/v1/user/profile").authenticated()
                         .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/crearProducto","/api/v1/gestionProductos/modificarStockProducto/**",
                                 "/api/v1/gestionProductos/modificarDestacadoProducto/**",
