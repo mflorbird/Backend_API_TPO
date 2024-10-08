@@ -55,7 +55,7 @@ public class CarritoService {
         return carrito;
     }
 
-    @Transactional // ATOMICA
+    @Transactional(rollbackFor = Exception.class) // ATOMICA
     public Carrito agregarProductoAlCarrito(Long productoId, int cantidad) throws SinStockException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -108,7 +108,7 @@ public class CarritoService {
         return carrito;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean eliminarProductoDelCarrito(Long carritoId, Long productoId, int cantidad) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -144,7 +144,7 @@ public class CarritoService {
         return false;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean vaciarCarrito(Long carritoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -167,7 +167,7 @@ public class CarritoService {
         return true;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void realizarCheckout() throws SinStockException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -206,7 +206,7 @@ public class CarritoService {
         carritoRepository.save(carrito);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Carrito aplicarDescuentoAlCarrito(String codigoDescuento){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
