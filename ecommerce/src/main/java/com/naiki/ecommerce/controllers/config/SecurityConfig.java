@@ -31,9 +31,9 @@ public class SecurityConfig {
                                 "/api/v1/gestionCatalogo/productos/destacados","/api/v1/gestionCatalogo/productos/categoria/*",
                                 "/api/v1/gestionCatalogo/productos/{productoId}/stock").permitAll()
 //                        .requestMatchers("/api/v1/carritos/**","/api/v1/user/profile").authenticated()
-                        .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/crearProducto","/api/v1/gestionProductos/modificarStockProducto/**",
-                                "/api/v1/gestionProductos/modificarDestacadoProducto/**",
-                                "/api/v1/gestionProductos/eliminarProducto/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/productos","/api/v1/gestionProductos/productos/{productoId}/stock",
+                                "/api/v1/gestionProductos/productos/{productoId}/destacado",
+                                "/api/v1/gestionProductos/productos/{productoId}").hasAuthority(Role.ADMIN.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)

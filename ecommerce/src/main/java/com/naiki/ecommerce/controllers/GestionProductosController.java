@@ -15,7 +15,7 @@ public class GestionProductosController {
     @Autowired
     private GestionProductosService gestionProductosService;
 
-    @PostMapping ("/crearProducto")
+    @PostMapping ("/productos")
     public ResponseEntity<?> altaProducto(@RequestBody ProductoDTO productoDTO) {
         try{
             gestionProductosService.altaProducto(  productoDTO.getNombre(),
@@ -32,7 +32,7 @@ public class GestionProductosController {
         }
     }
 
-    @PutMapping("/modificarStockProducto/")
+    @PutMapping("/productos/{productoId}/stock")
     public ResponseEntity<?> modificarStockProducto(@RequestParam("productoId") Long productoId, @RequestParam("cantidad") int cantidad) {
         try{
             gestionProductosService.modificarStockProducto(productoId, cantidad);
@@ -42,7 +42,7 @@ public class GestionProductosController {
         }
     }
 
-    @PutMapping("/modificarDestacadoProducto/")
+    @PutMapping("/productos/{productoId}/destacado")
     public ResponseEntity<?> modificarDestacadoProducto(@RequestParam("productoId") Long productoId, @RequestParam("destacado") boolean destacado) {
         try{
             gestionProductosService.modificarDestacadoProducto(productoId, destacado);
@@ -52,7 +52,7 @@ public class GestionProductosController {
         }
     }
 
-    @DeleteMapping ("/eliminarProducto/{productoId}")
+    @DeleteMapping ("/productos/{productoId}")
     public void bajaProducto(@PathVariable("productoId") Long productoId){
         try{
             gestionProductosService.bajaProducto(productoId);
