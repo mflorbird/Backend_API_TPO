@@ -30,7 +30,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/authenticate/**", "/api/v1/gestionCatalogo/productos/",
                                 "/api/v1/gestionCatalogo/productos/destacados","/api/v1/gestionCatalogo/productos/categoria/*",
                                 "/api/v1/gestionCatalogo/productos/{productoId}/stock").permitAll()
-//                        .requestMatchers("/api/v1/carritos/**","/api/v1/user/profile").authenticated()
                         .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/productos","/api/v1/gestionProductos/productos/{productoId}/stock",
                                 "/api/v1/gestionProductos/productos/{productoId}/destacado",
                                 "/api/v1/gestionProductos/productos/{productoId}").hasAuthority(Role.ADMIN.name())

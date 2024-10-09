@@ -7,6 +7,8 @@ import com.naiki.ecommerce.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -92,31 +94,39 @@ public class CarritoController {
         return ResponseEntity.ok(carrito);
     }
 
-    @PostMapping("/aplicarDescuento")
-    public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest, @RequestHeader("Autorization") String token){
+    @PutMapping("/descuento")
+    public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new RuntimeException("Usuario no autenticado");
+            }
             Carrito carritoConDescuento = carritoService.aplicarDescuentoAlCarrito(descuentoRequest.getCodigoDescuento());
-            double descuentoAplicado = carritoConDescuento.getTotalOriginal()*carritoConDescuento.getPorcentajeDescuentoAplicado();
-            return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal()+", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
-         }catch (IllegalArgumentException e){
+            double descuentoAplicado = carritoConDescuento.getTotalOriginal() * carritoConDescuento.getPorcentajeDescuentoAplicado();
+            return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal() + ", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-         }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @PostMapping("/realizarCheckout")
-    public ResponseEntity<?> realizarCheckout (@RequestHeader("Authorization") String token) {
+    @PutMapping("/checkout")
+    public ResponseEntity<?> realizarCheckout() {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new RuntimeException("Usuario no autenticado");
+            }
             carritoService.realizarCheckout();
-            return ResponseEntity.ok("Checkout realizado con exito");
+            return ResponseEntity.ok("Checkout realizado con éxito");
         } catch (SinStockException e) {
-            //si no hay stock devolver el mensaje del servicio
+            // Si no hay suficiente stock, devolver el mensaje del servicio
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (RuntimeException e) {
-            //cualquier otro error ///// revisar control de errores
+            // Cualquier otro error
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-}
 
+}
