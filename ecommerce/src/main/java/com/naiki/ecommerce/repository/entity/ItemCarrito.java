@@ -22,6 +22,21 @@ public class ItemCarrito {
     @Column
     private int cantidad;
 
+    @Column
+    private String cartId;
+
+    @Column
+    private double price;
+
+    @Column
+    private String size;
+
+    @Column
+    private double subtotal;
+
+    @Column
+    private String img;
+
 
     //Construcctor producto y cant
 
@@ -31,6 +46,16 @@ public class ItemCarrito {
     public ItemCarrito(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;
+    }
 
+    // Constructor completo
+    public ItemCarrito(Producto producto, int cantidad, String cartId, double price, String size, double subtotal, String img) {
+        this.producto = producto;
+        this.cantidad = cantidad;
+        this.cartId = cartId;
+        this.price = price;
+        this.size = size;
+        this.subtotal = subtotal;
+        this.img = img;
     }
 }
