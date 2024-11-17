@@ -20,10 +20,11 @@ public class Carrito {
     private double totalPrecio = 0.0; // este es el precio del carrito
 
     @ManyToOne // relacion con la entidad usuaro
+    @JoinColumn(name= "usuario_id")
     private User usuario; // relaciona el carrito con el usuario
 
-    @Column
-    private Long usuarioId; //ID del usuario
+//    @Transient
+//    private Long usuarioId; // el transient hace que no se almacene en la BD
 
     @Column
     private LocalDateTime fechaCreacion; // la fecha para que la agarre mostrar perfil
