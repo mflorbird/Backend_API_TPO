@@ -17,10 +17,13 @@ public class Carrito {
     public List<ItemCarrito> items = new ArrayList<>(); //lista de productos en el carro
 
     @Column
-    private double totalPrecio = 0.0; //este es el precio del carro
+    private double totalPrecio = 0.0; // este es el precio del carrito
 
     @ManyToOne // relacion con la entidad usuaro
     private User usuario; // relaciona el carrito con el usuario
+
+    @Column
+    private Long usuarioId; //ID del usuario
 
     @Column
     private LocalDateTime fechaCreacion; // la fecha para que la agarre mostrar perfil
@@ -37,6 +40,8 @@ public class Carrito {
     @Column
     private double totalOriginal;
 
+
+
     // constr. para la fecha
 
     public Carrito(){
@@ -48,29 +53,34 @@ public class Carrito {
 
     public void agregarProducto(ItemCarrito item) {
         this.items.add(item);
+        item.setCarrito(this); // asegurar relación inversa
         recalcularTotal();
     }
 
     public void eliminarProducto(ItemCarrito item) {
         this.items.remove(item);
+        item.setCarrito(null); //rompre relacion inversa
         recalcularTotal();
     }
 
     public void vaciarCarrito() {
+        for (ItemCarrito item : this.items) {
+            item.setCarrito(null);
+        }
         this.items.clear();
         recalcularTotal();
     }
 
     public void recalcularTotal() {
-        this.totalOriginal = items.stream() //stm para aplicar operaciones
-                //el lambda toma el item y para cada item calcula el valor.
+        this.totalOriginal = items.stream() // stm para aplicar operaciones
+        // el lambda toma el item y para cada item calcula el valor.
                 .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
                 .sum();
         this.totalPrecio = totalOriginal;
 
-        //agrego el descuento si tiene
-        if (porcentajeDescuentoAplicado>0){
-            this.totalPrecio=this.totalPrecio - (totalOriginal * porcentajeDescuentoAplicado);
+        // agregar el descuento si tiene
+        if (porcentajeDescuentoAplicado > 0) {
+            this.totalPrecio = this.totalPrecio - (totalOriginal * porcentajeDescuentoAplicado / 100);
         }
     }
 
