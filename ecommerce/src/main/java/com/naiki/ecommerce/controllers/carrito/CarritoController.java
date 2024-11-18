@@ -111,20 +111,14 @@ public class CarritoController {
         }
     }
 
-    @PutMapping("/checkout")
-    public ResponseEntity<?> realizarCheckout() {
+    @PutMapping("/{id}/checkout")
+    public ResponseEntity<?> realizarCheckout(@PathVariable Long id) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new RuntimeException("Usuario no autenticado");
-            }
             carritoService.realizarCheckout();
             return ResponseEntity.ok("Checkout realizado con éxito");
         } catch (SinStockException e) {
-            // Si no hay suficiente stock, devolver el mensaje del servicio
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (RuntimeException e) {
-            // Cualquier otro error
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
