@@ -129,4 +129,14 @@ public class CarritoController {
         }
     }
 
+    @PatchMapping("/{id}/cerrar")
+    public ResponseEntity<Carrito> cerrarCarrito(@PathVariable Long id) {
+        try{
+            Carrito carritoCerrado = carritoService.cerrarCarrito(id);
+            return ResponseEntity.ok(carritoCerrado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 }
