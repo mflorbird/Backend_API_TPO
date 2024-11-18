@@ -292,4 +292,20 @@ public class CarritoService {
         }
     }
 
+
+    //tengo que agregar esto para el front: updateItemQuantity = async (cartId, itemId, newQuantity)
+    @Transactional public Carrito actualizarCantidadProducto(Long carritoId, Long productoId, int cantidad) {
+        Carrito carrito = carritoRepository.findById(carritoId).orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
+        ItemCarrito item = carrito.getItems().stream()
+                .filter(i -> i.getProducto().getId().equals(productoId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado en el carrito"));
+
+        item.setCantidad(cantidad);
+        item.setSubtotal(cantidad * item.getProducto().getPrecio());
+
+        carrito.recalcularTotal();
+        return carritoRepository.save(carrito);
+    }
+
 }
