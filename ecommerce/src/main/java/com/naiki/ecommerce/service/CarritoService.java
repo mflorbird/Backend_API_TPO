@@ -190,15 +190,14 @@ public class CarritoService {
         //verificar stock de los prod. que tiene el carrito
         for (ItemCarrito item : carrito.getItems()) {
             Producto producto = item.getProducto();
-            int sizeStock = producto.getStockTotal().stream()
+            Producto.Stock sizeStock = producto.getStockTotal().stream()
                     .filter(s -> s.getSize().equals(item.getSize()))
-                    .mapToInt(s -> Integer.parseInt(s.getStock()))
-                    .sum();
-            if (sizeStock < item.getCantidad()) {
-                throw new SinStockException("No hay suficiente stock para el producto:" + producto.getNombre());
+                    .findFirst().orElseThrow(() -> new SinStockException("No hay suficiente stock para el producto: " + producto.getNombre() + " en el tamaño " + item.getSize()));
+            int availableStock = Integer.parseInt(sizeStock.getStock());
+            if (availableStock < item.getCantidad()) {
+                throw new SinStockException("No hay suficiente stock para el producto: " + producto.getNombre() + " en el tamaño " + item.getSize());
             }
         }
-
         //deduct stock
         for (ItemCarrito item : carrito.getItems()) {
             Producto producto = item.getProducto();
