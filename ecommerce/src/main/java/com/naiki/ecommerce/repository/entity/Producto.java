@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -41,6 +42,19 @@ public class Producto {
 
     @Column(name = "fechaModificacion")
     private LocalDateTime fechaModificacion;
+
+    //DIEGO, AGREGO ESTO PORQUE CREO QUE LO NECESITO PARA EL CHECKOUT.
+    @ElementCollection
+    private List<Stock> stockTotal;
+
+    // Clase embebida `Stock` esto lo agrego porque en front tenemos size y stock dentro de producto como varios.
+    @Embeddable
+    @Data
+    public static class Stock {
+        private String size;
+        private String stock;
+    }
+
 
     public Producto (){
         this.fechaCreacion = LocalDateTime.now();
