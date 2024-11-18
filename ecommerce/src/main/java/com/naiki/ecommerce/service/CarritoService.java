@@ -190,22 +190,33 @@ public class CarritoService {
         //verificar stock de los prod. que tiene el carrito
         for (ItemCarrito item : carrito.getItems()) {
             Producto producto = item.getProducto();
-            if (producto.getStock() < item.getCantidad()) {
-                throw new SinStockException("No hay suficiente stock para el producto: " + producto.getNombre());
+            int sizeStock = producto.getStockTotal().stream()
+                    .filter(s -> s.getSize().equals(item.getSize()))
+                    .mapToInt(s -> Integer.parseInt(s.getStock()))
+                    .sum();
+            if (sizeStock < item.getCantidad()) {
+                throw new SinStockException("No hay suficiente stock para el producto:" + producto.getNombre());
             }
         }
 
-        //Generar la baja del stock
+        //deduct stock
         for (ItemCarrito item : carrito.getItems()) {
             Producto producto = item.getProducto();
-            producto.setStock(producto.getStock() - item.getCantidad());
+            producto.getStockTotal().forEach(stockItem -> {
+                if (stockItem.getSize().equals(item.getSize())) {
+                    int availableStock = Integer.parseInt(stockItem.getStock());
+                    int newStock = availableStock - item.getCantidad();
+                    stockItem.setStock(String.valueOf(newStock));
+                }
+            });
             productoRepository.save(producto);
         }
 
-        //vaciar carrito
-        carrito.vaciarCarrito();
+        //cerrar carrito
+        carrito.setEstado("cerrado");
         carritoRepository.save(carrito);
     }
+
 
     @Transactional(rollbackFor = Exception.class)
     public Carrito aplicarDescuentoAlCarrito(String codigoDescuento){
