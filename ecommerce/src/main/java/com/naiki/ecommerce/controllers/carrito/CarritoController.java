@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.util.List;
-
+import java.util.Map;
 import static java.lang.Long.parseLong;
 
 // aca hay que validar la informacion del mensaje.
@@ -132,5 +132,24 @@ public class CarritoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    //agrego esto para actualizar la canitdad en el carrito.
+    @PatchMapping("/{carritoId}/items/{productoId}/quantity")
+    public ResponseEntity<Carrito> actualizarCantidadProducto(
+            @PathVariable Long carritoId,
+            @PathVariable Long productoId,
+            @RequestBody Map<String, Integer> payload) {
+        if (!payload.containsKey("quantity")) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        int cantidad = payload.get("quantity");
+        try {
+            Carrito carritoActualizado = carritoService.actualizarCantidadProducto(carritoId, productoId, cantidad);
+            return ResponseEntity.ok(carritoActualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
 
 }
