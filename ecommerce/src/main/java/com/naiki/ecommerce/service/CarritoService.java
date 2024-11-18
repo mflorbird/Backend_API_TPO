@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -268,4 +269,17 @@ public class CarritoService {
         //y aca si tiene productos, lo devuelve con lo que tiene
         return carrito;
     }
+
+
+    public Carrito cerrarCarrito(Long id){
+        Optional<Carrito> carritoOptional = carritoRepository.findById(id);
+        if (carritoOptional.isPresent()){
+            Carrito carrito = carritoOptional.get();
+            carrito.setEstado("cerrado");
+            return carritoRepository.save(carrito);
+        } else {
+            throw new RuntimeException("Carrito no encontrado");
+        }
+    }
+
 }
