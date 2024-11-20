@@ -16,6 +16,14 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //nuevo campo agregado xNATESTA 19/11
+    @Column(name = "model")
+    private String model;
+
+    //nuevo campo agregado xNATESTA 19/11
+    @Column(name = "featured")
+    private Boolean featured;
+
     @Column(name = "nombre")
     private String nombre;
 
