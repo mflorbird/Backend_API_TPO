@@ -24,23 +24,35 @@ public class Producto {
     @Column(name = "featured")
     private Boolean featured;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(name = "category")
+    private String category;
 
-    @Column(name = "descripcion")
-    private String descripcion;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "categoria")
-    private String categoria;
+    @Column(name = "price")
+    private Double price;
 
-    @Column(name = "precio")
-    private Double precio;
+    @Column(name = "image")
+    private String image;
+
+//    @Column(name = "nombre")
+//    private String nombre;
+//
+//    @Column(name = "descripcion")
+//    private String descripcion;
+//
+//    @Column(name = "categoria")
+//    private String categoria;
+//
+//    @Column(name = "precio")
+//    private Double precio;
 
     @Column(name = "stock")
     private Integer stock;
 
-    @Column(name = "imagen")
-    private String imagen;
+//    @Column(name = "imagen")
+//    private String imagen;
 
     @Column(name = "destacado")
     private Boolean destacado;
