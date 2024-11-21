@@ -18,20 +18,30 @@ public class GestionProductosController {
     @PostMapping ("/productos")
     public ResponseEntity<?> altaProducto(@RequestBody ProductoDTO productoDTO) {
         try{
-            gestionProductosService.altaProducto(  productoDTO.getNombre(),
-                    productoDTO.getCategoria(),
-                    productoDTO.getDescripcion(),
-                    productoDTO.getFoto(),
-                    productoDTO.isDestacado(),
+            gestionProductosService.altaProducto(
+                    productoDTO.getModel(),
+                    productoDTO.getCategory(),
+                    productoDTO.getDescription(),
+                    productoDTO.getImage(),
+                    productoDTO.isFeatured(),
                     productoDTO.getEstado(),
-                    productoDTO.getPrecio(),
-                    productoDTO.getStock() );
+                    productoDTO.getPrice(),
+                    productoDTO.getStockTotal()
+            );
+//            gestionProductosService.altaProducto(  productoDTO.getNombre(),
+//                    productoDTO.getCategoria(),
+//                    productoDTO.getDescripcion(),
+//                    productoDTO.getFoto(),
+//                    productoDTO.isDestacado(),
+//                    productoDTO.getEstado(),
+//                    productoDTO.getPrecio(),
+//                    productoDTO.getStock() );
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
+    //ESTE NO LO TOCO, PERO CREO QUE YA NO VA DE ESTA MANERA, PORQUE QUANTITY LO TENEMOS DENTRO DE STOCK.
     @PutMapping("/productos/{productoId}/stock")
     public ResponseEntity<?> modificarStockProducto(@RequestParam("productoId") Long productoId, @RequestParam("cantidad") int cantidad) {
         try{
@@ -41,13 +51,24 @@ public class GestionProductosController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
-
+    //ESTE LO DEJO COMO ESTABA, PERO ENTIENDO QUE HAY QUE MODIFICARLO POR LO QUE AGREGO EN LA LINEA 65
     @PutMapping("/productos/{productoId}/destacado")
     public ResponseEntity<?> modificarDestacadoProducto(@RequestParam("productoId") Long productoId, @RequestParam("destacado") boolean destacado) {
         try{
             gestionProductosService.modificarDestacadoProducto(productoId, destacado);
             return ResponseEntity.ok().build();
         }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    // AGREGO ESTO 20/11
+    @PutMapping("/productos/{productoId}/featured")
+    public ResponseEntity<?> modificarFeaturedProducto(@PathVariable("productoId") Long productoId, @RequestParam("featured") boolean featured) {
+        try {
+            gestionProductosService.modificarFeaturedProducto(productoId, featured);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }

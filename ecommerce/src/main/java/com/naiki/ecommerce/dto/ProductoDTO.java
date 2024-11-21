@@ -1,4 +1,6 @@
 package com.naiki.ecommerce.dto;
+import com.naiki.ecommerce.repository.entity.Producto;
+
 import java.util.List;
 public class ProductoDTO {
 
@@ -79,7 +81,7 @@ public class ProductoDTO {
         this.price = price;
     }
 
-    public List<Stock> getStockTotal() {
+    public List<Producto.Stock> getStockTotal() {
         return stockTotal;
     }
 
