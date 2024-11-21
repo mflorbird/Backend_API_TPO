@@ -12,24 +12,45 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductoRepository extends JpaRepository<Producto, Long>  {
+public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findByDestacado(Boolean destacado);
+
     List<Producto> findByCategoria(String categoria);
 
+    List<Producto> findByFeatured(Boolean featured);
+
+    List<Producto> findByCategory(String category);
+
+//DIEGO ESTO LO COMENTO 20/11
+//    @Modifying
+//    @Query(value = "UPDATE productos " +
+//            "SET stock = :cantidad ,"+
+//            "fecha_modificacion = NOW() "+
+//            "WHERE id = :id", nativeQuery = true)
+//    void modificarStock(@Param(value = "id") long id,@Param(value = "cantidad") int cantidad);
+//
+//
+//    @Modifying
+//    @Query(value = "UPDATE productos " +
+//            "SET destacado = :destacado ,"+
+//            "fecha_modificacion = NOW() "+
+//            "WHERE id = :id", nativeQuery = true)
+//    void modificarDestacado(@Param(value = "id") long id,@Param(value = "destacado") boolean destacado);
+//}
 
     @Modifying
     @Query(value = "UPDATE productos " +
-            "SET stock = :cantidad ,"+
-            "fecha_modificacion = NOW() "+
+            "SET stock = :cantidad ," +
+            "fecha_modificacion = NOW() " +
             "WHERE id = :id", nativeQuery = true)
-    void modificarStock(@Param(value = "id") long id,@Param(value = "cantidad") int cantidad);
-
+    void modificarStock(@Param(value = "id") long id, @Param(value = "cantidad") int cantidad);
 
     @Modifying
     @Query(value = "UPDATE productos " +
-            "SET destacado = :destacado ,"+
-            "fecha_modificacion = NOW() "+
+            "SET featured = :featured ," +
+            "fecha_modificacion = NOW() " +
             "WHERE id = :id", nativeQuery = true)
-    void modificarDestacado(@Param(value = "id") long id,@Param(value = "destacado") boolean destacado);
+    void modificarFeatured(@Param(value = "id") long id, @Param(value = "featured") boolean featured);
+
 }
