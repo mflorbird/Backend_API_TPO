@@ -42,11 +42,15 @@ public class CatalogoProductosService {
         return productoRepository.findByDestacado(true);
     }
 
-    // Productos por categoria
-    public List<Producto> getProductosPorCategoria(String categoria) {
-        return productoRepository.findByCategoria(categoria);
-    }
+//    // Productos por categoria - COMENTO NATESTA 20/11
+//    public List<Producto> getProductosPorCategoria(String categoria) {
+//        return productoRepository.findByCategoria(categoria);
+//    }
 
+    // Obtener productos por categoría NEW
+    public List<Producto> getProductosPorCategoria(String categoria) {
+        return productoRepository.findByCategory(categoria);
+    }
 
     // Detalle de un producto
     public Producto getDetalleProducto(Long productoId) {
@@ -54,13 +58,21 @@ public class CatalogoProductosService {
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
     }
 
-    // Revisar stock de un producto
+//    // Revisar stock de un producto - COMENTO NATESTA 20/11
+//    public int getStockProducto(Long productoId) {
+//        return productoRepository.findById(productoId)
+//                .map(Producto::getStock)
+//                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
+//    }
+
+    // Obtener stock total de un producto (suma de todos los tamaños) NEW
     public int getStockProducto(Long productoId) {
         return productoRepository.findById(productoId)
-                .map(Producto::getStock)
+                .map(producto -> producto.getStockTotal().stream()
+                        .mapToInt(stock -> Integer.parseInt(stock.getStock()))
+                        .sum())
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
     }
-
 
 
     // Productos recientes vistos por el usuario
