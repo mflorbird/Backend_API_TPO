@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 public class GestionProductosService {
@@ -63,6 +65,24 @@ public class GestionProductosService {
         producto.setStock(cantidad);
         productoRepository.save(producto);
     }
+
+    //DESDE LA LINEA 69 HASTA LA 85 ES DEL 20/11
+    //DIEGO AGREGO ESTO, PERO ME PARECE QUE NO ES CORRECTO TENERLO AGRUPADO ACA.
+    public void modificarStockProducto(Long id, List<Producto.Stock> stockTotal) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setStockTotal(stockTotal);
+        productoRepository.save(producto);
+    }
+
+    //DIEGO AGREGO EL FEATURED ACA
+    public void modificarFeaturedProducto(Long id, boolean featured) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+        producto.setFeatured(featured);
+        productoRepository.save(producto);
+    }
+    //DESDE LA LINEA 69 HASTA LA 85 ES DEL 20/11
 
     public void modificarDestacadoProducto(Long id, boolean destacado) {
         Producto producto = productoRepository.findById(id)
