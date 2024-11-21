@@ -192,10 +192,10 @@ public class CarritoService {
             Producto producto = item.getProducto();
             Producto.Stock sizeStock = producto.getStockTotal().stream()
                     .filter(s -> s.getSize().equals(item.getSize()))
-                    .findFirst().orElseThrow(() -> new SinStockException("No hay suficiente stock para el producto: " + producto.getNombre() + " en el tamaño " + item.getSize()));
+                    .findFirst().orElseThrow(() -> new SinStockException("No hay suficiente stock para el producto: " + producto.getModel() + " en el tamaño " + item.getSize()));
             int availableStock = Integer.parseInt(sizeStock.getStock());
             if (availableStock < item.getCantidad()) {
-                throw new SinStockException("No hay suficiente stock para el producto: " + producto.getNombre() + " en el tamaño " + item.getSize());
+                throw new SinStockException("No hay suficiente stock para el producto: " + producto.getModel() + " en el tamaño " + item.getSize());
             }
         }
         //deduct stock
@@ -304,7 +304,7 @@ public class CarritoService {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado en el carrito"));
 
         item.setCantidad(cantidad);
-        item.setSubtotal(cantidad * item.getProducto().getPrecio());
+        item.setSubtotal(cantidad * item.getProducto().getPrice());
 
         carrito.recalcularTotal();
         return carritoRepository.save(carrito);
