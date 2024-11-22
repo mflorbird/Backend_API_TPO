@@ -59,12 +59,12 @@ public class GestionProductosService {
         productoRepository.save(producto);
     }
 
-    public void modificarStockProducto(Long id, int cantidad) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        producto.setStock(cantidad);
-        productoRepository.save(producto);
-    }
+//    public void modificarStockProducto(Long id, int cantidad) {
+//        Producto producto = productoRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+//        producto.setStock(cantidad);
+//        productoRepository.save(producto);
+//    }
 
     //DESDE LA LINEA 69 HASTA LA 85 ES DEL 20/11
     //DIEGO AGREGO ESTO, PERO ME PARECE QUE NO ES CORRECTO TENERLO AGRUPADO ACA.
