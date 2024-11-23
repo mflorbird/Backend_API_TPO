@@ -75,7 +75,7 @@ public class Carrito {
     public void recalcularTotal() {
         this.totalOriginal = items.stream() // stm para aplicar operaciones
         // el lambda toma el item y para cada item calcula el valor.
-                .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
+                .mapToDouble(item -> item.getProducto().getPrice() * item.getCantidad())
                 .sum();
         this.totalPrecio = totalOriginal;
 
