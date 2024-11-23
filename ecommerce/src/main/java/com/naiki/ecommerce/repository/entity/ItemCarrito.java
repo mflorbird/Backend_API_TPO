@@ -46,6 +46,9 @@ public class ItemCarrito {
     public ItemCarrito(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;
+        this.price= producto.getPrice();
+        this.size= "";
+        actualizarSubtotal();
     }
 
     // Constructor completo
