@@ -46,8 +46,9 @@ public class GestionProductosService {
 //    }
 //}
 
-    public void altaProducto(String model, String category, String description, String image, boolean featured, String estado, Double price, List<Producto.Stock> stockTotal) {
+    public void altaProducto(String id, String model, String category, String description, String image, boolean featured, String estado, Double price, List<Producto.Stock> stockTotal) {
         Producto producto = new Producto();
+        producto.setId(Long.valueOf(id));
         producto.setModel(model);
         producto.setCategory(category);
         producto.setDescription(description);

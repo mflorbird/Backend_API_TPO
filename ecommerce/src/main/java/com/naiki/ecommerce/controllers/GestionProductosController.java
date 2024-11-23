@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("api/v1/gestionProductos")
@@ -20,7 +21,12 @@ public class GestionProductosController {
     @PostMapping ("/productos")
     public ResponseEntity<?> altaProducto(@RequestBody ProductoDTO productoDTO) {
         try{
+            // Convertir ProductoDTO.Stock a Producto.Stock
+            List<Producto.Stock> stockTotalEntity = productoDTO.getStockTotal().stream()
+                    .map(stock -> new Producto.Stock(stock.getSize(), stock.getStock()))
+                    .collect(Collectors.toList());
             gestionProductosService.altaProducto(
+                    productoDTO.getId(),
                     productoDTO.getModel(),
                     productoDTO.getCategory(),
                     productoDTO.getDescription(),
@@ -28,7 +34,7 @@ public class GestionProductosController {
                     productoDTO.isFeatured(),
                     productoDTO.getEstado(),
                     productoDTO.getPrice(),
-                    productoDTO.getStockTotal()
+                    stockTotalEntity
             );
 //            gestionProductosService.altaProducto(  productoDTO.getNombre(),
 //                    productoDTO.getCategoria(),

@@ -5,6 +5,7 @@ import java.util.List;
 public class ProductoDTO {
 
     //agrego esto y modifico porque en el front los tenemos en ingles. featured y list es nuevo asi los tenemos en el front.
+    private String id;
     private String model;
     private String category;
     private String description;
@@ -14,7 +15,8 @@ public class ProductoDTO {
     private Double price;
     private List<Stock> stockTotal;
 
-    public ProductoDTO(String model, String category, String description, String image, boolean featured, String estado, Double price, List<Stock> stockTotal) {
+    public ProductoDTO(String id, String model, String category, String description, String image, boolean featured, String estado, Double price, List<Stock> stockTotal) {
+        this.id = id;
         this.model = model;
         this.category = category;
         this.description = description;
@@ -81,12 +83,20 @@ public class ProductoDTO {
         this.price = price;
     }
 
-    public List<Producto.Stock> getStockTotal() {
+    public List<Stock> getStockTotal() {
         return stockTotal;
     }
 
     public void setStockTotal(List<Stock> stockTotal) {
         this.stockTotal = stockTotal;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     // Clase embebida `Stock`

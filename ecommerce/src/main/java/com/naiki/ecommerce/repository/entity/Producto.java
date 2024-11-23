@@ -73,6 +73,12 @@ public class Producto {
     public static class Stock {
         private String size;
         private String stock;
+
+        public Stock() {}
+        public Stock(String size, String stock) {
+            this.size = size;
+            this.stock = stock;
+        }
     }
 
 
