@@ -22,7 +22,7 @@ public class RegisterRequest {
     private String email;
     @JsonProperty("usuario")
     private String username;
-    @JsonProperty("contraseña")
+    @JsonProperty("contrasena")
     private String password;
     @JsonProperty("fechaNacimiento")
     private LocalDate birthDate;
