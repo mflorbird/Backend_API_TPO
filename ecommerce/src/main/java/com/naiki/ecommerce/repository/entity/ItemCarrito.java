@@ -58,4 +58,9 @@ public class ItemCarrito {
         this.subtotal = subtotal;
         this.img = img;
     }
+
+    // para actualizar el subtotal basado en precio y cantidad
+    public void actualizarSubtotal() {
+        this.subtotal = this.price * this.cantidad;
+    }
 }
