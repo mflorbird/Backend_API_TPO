@@ -66,11 +66,11 @@ public class GestionProductosController {
         try {
             // Convertir ProductoDTO.Stock a Producto.Stock
             List<Producto.Stock> stockTotalEntity = stockTotal.stream()
-                    .map(stock -> new Producto.Stock())
-                    .toList();
+                .map(stock -> new Producto.Stock(stock.getSize(), stock.getStock()))
+                    .collect(Collectors.toList());
             gestionProductosService.modificarStockProducto(productoId, stockTotalEntity);
             return ResponseEntity.ok().build();
-        } catch (Exception e) {
+        } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
