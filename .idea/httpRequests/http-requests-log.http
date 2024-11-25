@@ -1,0 +1,66 @@
+GET http://localhost:8080/api/v1/user/profile
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+###
+
+GET http://localhost:8080/api/v1/user/profile
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+###
+
+GET http://localhost:8080/api/v1/authenticate/test
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+###
+
+POST http://localhost:8080/api/v1/authenticate/register
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+###
+
+POST http://localhost:8080/api/v1/authenticate/register
+Content-Type: application/json
+Content-Length: 123
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "firstname": "Florencia",
+  "lastname": "Bird",
+  "email": "florb@gmail.com",
+  "password": "12234",
+  "role": "USER"
+}
+
+###
+
+POST http://localhost:8080/api/v1/authenticate/register
+Content-Type: application/json
+Content-Length: 123
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2024.2.0.2
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+
+{
+  "firstname": "Florencia",
+  "lastname": "Bird",
+  "email": "florb@gmail.com",
+  "password": "12234",
+  "role": "USER"
+}
+
+###
+
