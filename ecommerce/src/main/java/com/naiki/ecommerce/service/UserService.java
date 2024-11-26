@@ -28,7 +28,7 @@ public class UserService {
         var userName = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findById(id).orElseThrow(() -> new Exception("El usuario no se ha encontrado."));
-        return new UserData(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(), Collections.emptyList());
+        return new UserData(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(), Collections.emptyList(), Collections.emptyList());
     }
 
     public UserData getAuthenticatedUserProfile() throws Exception {
@@ -41,8 +41,8 @@ public class UserService {
                 .map(carrito -> new CarritoInfo(carrito.getId(), (LocalDateTime) carrito.getFechaTransaccion()))
                 .collect(Collectors.toList());
 
-        UserData userData = new UserData(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),carritoInfoList);
-        userData.setCarritos(carritoInfoList);
+        UserData userData = new UserData(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),Collections.emptyList(), Collections.emptyList());
+//        userData.setCarritos(carritoInfoList);
 
         return userData;
 

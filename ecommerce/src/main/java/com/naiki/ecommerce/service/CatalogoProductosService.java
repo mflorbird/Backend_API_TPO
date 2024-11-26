@@ -37,27 +37,9 @@ public class CatalogoProductosService {
         return productoRepository.findAll();
     }
 
-    // Productos destacados
-    public List<Producto> getProductosDestacados() {
-        return productoRepository.findByDestacado(true);
-    }
-
-    // Productos por categoria
-    public List<Producto> getProductosPorCategoria(String categoria) {
-        return productoRepository.findByCategoria(categoria);
-    }
-
-
     // Detalle de un producto
     public Producto getDetalleProducto(Long productoId) {
         return productoRepository.findById(productoId)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
-    }
-
-    // Revisar stock de un producto
-    public int getStockProducto(Long productoId) {
-        return productoRepository.findById(productoId)
-                .map(Producto::getStock)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
     }
 
@@ -65,69 +47,51 @@ public class CatalogoProductosService {
 
     // Productos recientes vistos por el usuario
     public List<Producto> getProductosRecientes(String email) {
-        List<ProductoVisitado> productosVisitados = productoVisitadoRepository.findTop10ByUserEmailOrderByFechaVisitaDesc(email);
-        // elegir los primeros 5 productos distintos
-        List<Producto> productosUnicos = new ArrayList<>();
-        for (ProductoVisitado productoVisitado : productosVisitados) {
-            Producto producto = productoVisitado.getProducto();
-            if (!productosUnicos.contains(producto)) {
-                productosUnicos.add(producto);
-            }
-            if (productosUnicos.size() == 5) {
-                break;
-            }
-
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
+        List<Producto> visitados = user.getVisitados();
+        if (visitados == null) {
+            return new ArrayList<>();
         }
-        return productosUnicos;
+        return visitados;
     }
 
-    // Agregar un producto a la lista de productos visitados
-    public void agregarProductoVisitado(String email, Long productoId) {
-        ProductoVisitado productoVisitado = new ProductoVisitado();
-        productoVisitado.setUser(userRepository.findByEmail(email).orElseThrow());
-        productoVisitado.setProducto(productoRepository.getOne(productoId));
-        productoVisitado.setFechaVisita(new Date());
-        productoVisitadoRepository.save(productoVisitado);
-    }
-
-    // Agregar un producto a la lista de favoritos
-    public String agregarProductoFavorito(String email, Long productoId) {
-        Producto producto = productoRepository.findById(productoId).orElseThrow();
-        User user = userRepository.findByEmail(email).orElseThrow();
-        ProductoFavorito productoFavorito = productoFavoritoRepository.findByUserAndProducto(user, producto);
-
-        if (productoFavorito != null) {
-            productoFavorito.setFechaFavorito(new Date());
-            productoFavoritoRepository.save(productoFavorito);
-            return "Producto ya estaba en favoritos";
-        }
-        productoFavorito = new ProductoFavorito();
-        productoFavorito.setUser(user);
-        productoFavorito.setProducto(producto);
-        productoFavorito.setFechaFavorito(new Date());
-        productoFavoritoRepository.save(productoFavorito);
-        return "Producto agregado a favoritos";
-    }
-
-    // Eliminar un producto de la lista de favoritos
-    public String eliminarProductoFavorito(String email, Long productoId) {
-        User user = userRepository.findByEmail(email).orElseThrow();
-        Producto producto = productoRepository.getOne(productoId);
-        ProductoFavorito productoFavorito = productoFavoritoRepository.findByUserAndProducto(user, producto);
-        if (productoFavorito != null) {
-            productoFavoritoRepository.delete(productoFavorito);
-            return "Producto eliminado de favoritos";
-        }
-        return "Producto no estaba en favoritos";
+    // Productos destacados
+    public List<Producto> getProductosDestacados() {
+        return productoRepository.findByDestacado(true);
     }
 
     public List<Producto> getProductosFavoritos(String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
-        List<ProductoFavorito> productosFavoritos = productoFavoritoRepository.findByUserOrderByFechaFavoritoDesc(user);
-        List<Producto> productos = new ArrayList<>();
-        for (ProductoFavorito productoFavorito : productosFavoritos) {
-            productos.add(productoFavorito.getProducto());
+        if (user.getFavoritos() == null) {
+            return new ArrayList<>();
         }
-        return productos;
+        return user.getFavoritos();
     }
+
+    // Agregar un producto a la lista de productos visitados
+    public boolean updateVisitados(String email, List<Producto> nuevosVisitados) {
+        try {
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
+            user.setVisitados(nuevosVisitados);
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean updateFavorites(String email, List<Producto> nuevosFavoritos) {
+        try {
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
+            user.setFavoritos(nuevosFavoritos);
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }
