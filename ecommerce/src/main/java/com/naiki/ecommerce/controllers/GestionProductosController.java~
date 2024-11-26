@@ -37,16 +37,16 @@ public class GestionProductosController {
         }
     }
 
-//    {API_URL_PRODUCTO}/productos/${id}`);|
     @DeleteMapping ("/productos/{productoId}")
-    public ResponseEntity<?> bajaProducto(@PathVariable("productoId") Long productoId){
+    public void bajaProducto(@PathVariable("productoId") Long productoId){
         try{
             gestionProductosService.bajaProducto(productoId);
-            return ResponseEntity.ok().build();
         }catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+
 
 
 

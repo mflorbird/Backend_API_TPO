@@ -22,7 +22,7 @@ public class CatalogoProductosController {
     private CatalogoProductosService catalogoProductosService;
 
     // Productos todos
-    @GetMapping("/productos") //tested ok
+    @GetMapping("/") //tested ok
     public ResponseEntity<?> getProductos() {
         return ResponseEntity.ok(catalogoProductosService.getProductos());
     }
@@ -64,16 +64,16 @@ public class CatalogoProductosController {
     }
 
     // Revisar stock de un producto
-    @GetMapping("/productos/{productoId}/stock") //tested ok
-    public ResponseEntity<?> getStockProducto(@PathVariable("productoId") Long productoId) {
-        try {
-            int stock = catalogoProductosService.getStockProducto(productoId);
-            return ResponseEntity.ok(stock);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Producto no encontrado para ID: " + productoId);
-        }
-    }
+//    @GetMapping("/productos/{productoId}/stock") //tested ok
+//    public ResponseEntity<?> getStockProducto(@PathVariable("productoId") Long productoId) {
+//        try {
+//            int stock = catalogoProductosService.getStockProducto(productoId);
+//            return ResponseEntity.ok(stock);
+//        } catch (EntityNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("Producto no encontrado para ID: " + productoId);
+//        }
+//    }
 
     // Agregar a Favoritos del usuario
     @PutMapping("/productos/favoritos/{productoId}")

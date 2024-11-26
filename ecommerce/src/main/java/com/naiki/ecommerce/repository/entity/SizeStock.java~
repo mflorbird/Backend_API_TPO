@@ -1,0 +1,12 @@
+package com.naiki.ecommerce.repository.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class SizeStock {
+    private int cantidad;
+    private String talle;
+
+}
