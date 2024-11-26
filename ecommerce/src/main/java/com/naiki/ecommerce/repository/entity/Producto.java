@@ -1,12 +1,14 @@
 package com.naiki.ecommerce.repository.entity;
 
+import com.naiki.ecommerce.dto.ProductRequest;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "productos")
 public class Producto {
@@ -15,20 +17,21 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre")
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "categoria")
+    @Column(name = "categoria", nullable = false)
     private String categoria;
 
-    @Column(name = "precio")
+    @Column(name = "precio", nullable = false)
     private Double precio;
 
-    @Column(name = "stock")
-    private Integer stock;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "producto_stock_id")
+    private List<SizeStock> stockTotal;
 
     @Column(name = "imagen")
     private String imagen;
@@ -36,27 +39,36 @@ public class Producto {
     @Column(name = "destacado")
     private Boolean destacado;
 
-    @Column(name = "fechaCreacion")
+    @Column(name = "fecha_creacion", updatable = false)
     private LocalDateTime fechaCreacion;
 
-    @Column(name = "fechaModificacion")
+    @Column(name = "fecha_modificacion")
     private LocalDateTime fechaModificacion;
 
-    public Producto (){
+    @PrePersist
+    protected void onCreate() {
         this.fechaCreacion = LocalDateTime.now();
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "usuarioCreacion", referencedColumnName = "id", nullable = false)
-//    @Column(name = "usuarioCreacion")
-//    private User usuarioCreacion;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "usuarioModificacion", referencedColumnName = "id", nullable = true)
-//    @Column(name = "usuarioModificacion")
-//    private User usuarioModificacion;
+    @PreUpdate
+    protected void onUpdate() {
+        this.fechaModificacion = LocalDateTime.now();
+    }
 
-    @Column(name = "estado")
-    private String estado;
+    public void setStockTotal(List<ProductRequest.SizeStock> stockTotal) {
+        this.stockTotal = stockTotal.stream()
+                .map(sizeStock -> new SizeStock(null, sizeStock.getCantidad(), sizeStock.getTalle()))
+                .toList();
+    }
 
+    // Relaciones comentadas: pueden habilitarse cuando tengas los modelos de usuario definidos.
+    /*
+    @ManyToOne
+    @JoinColumn(name = "usuario_creacion", referencedColumnName = "id", nullable = false)
+    private User usuarioCreacion;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_modificacion", referencedColumnName = "id")
+    private User usuarioModificacion;
+    */
 }
