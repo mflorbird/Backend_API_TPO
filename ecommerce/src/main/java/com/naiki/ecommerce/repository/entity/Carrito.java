@@ -5,83 +5,45 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Entity // tabla en la BD.
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "carrito")
 public class Carrito {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // PARA GENERAR SOLO EL ID
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)// relacion c/productos del carrito
-    public List<ItemCarrito> items = new ArrayList<>(); //lista de productos en el carro
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column
-    private double totalPrecio = 0.0; //este es el precio del carro
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Map<Long, ItemCarrito> items;
 
-    @ManyToOne // relacion con la entidad usuaro
-    private User usuario; // relaciona el carrito con el usuario
+    @Column(name = "estado")
+    private String estado = "activo";
 
-    @Column
-    private LocalDateTime fechaCreacion; // la fecha para que la agarre mostrar perfil
+    @Column(name = "precio_total")
+    private Double precioTotal;
 
-    @Column
-    private String estado;
+    @Column(name = "precio_discount")
+    private Double precioDiscount;
 
-    @Column
-    private String codigoDescuento;
+    @Column(name = "discount")
+    private Double discount;
 
-    @Column
-    private double porcentajeDescuentoAplicado = 0.0;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column
-    private double totalOriginal;
+    @Column(name = "closed_at")
+    private LocalDateTime closedAt;
 
-    // constr. para la fecha
-
-    public Carrito(){
-        this.fechaCreacion = LocalDateTime.now();
+    public Carrito(Long userId) {
+        this.userId = userId;
     }
 
-
-//metodos
-
-    public void agregarProducto(ItemCarrito item) {
-        this.items.add(item);
-        recalcularTotal();
-    }
-
-    public void eliminarProducto(ItemCarrito item) {
-        this.items.remove(item);
-        recalcularTotal();
-    }
-
-    public void vaciarCarrito() {
-        this.items.clear();
-        recalcularTotal();
-    }
-
-    public void recalcularTotal() {
-        this.totalOriginal = items.stream() //stm para aplicar operaciones
-                //el lambda toma el item y para cada item calcula el valor.
-                .mapToDouble(item -> item.getProducto().getPrecio() * item.getCantidad())
-                .sum();
-        this.totalPrecio = totalOriginal;
-
-        //agrego el descuento si tiene
-        if (porcentajeDescuentoAplicado>0){
-            this.totalPrecio=this.totalPrecio - (totalOriginal * porcentajeDescuentoAplicado);
-        }
-    }
-
-    //metodo para codigo descuento
-    public void aplicarDescuento(String codigoDescuento, double porcentajeDescuento){
-        this.codigoDescuento=codigoDescuento;
-        this.porcentajeDescuentoAplicado=porcentajeDescuento;
-        recalcularTotal();
-    }
-
-    public Object getFechaTransaccion() {
-        return fechaCreacion;
-    }
 }
