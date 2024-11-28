@@ -25,12 +25,33 @@ public class CarritoController {
     @Autowired // para que el controller use los metodos de service
     private CarritoService carritoService;
 
-    @GetMapping("/all")
-    public List<Carrito> getAllCarritos() {
-        return carritoService.findAll();
-    }
 
-    @GetMapping("/{id}")  // obtener carrito por id
+        @GetMapping("/")
+        public ResponseEntity<?> obtenerCarritoUsuario() {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+            if (carrito == null) {
+                return ResponseEntity.ok("Aun no tenes productos en el carrito");
+            }
+            return ResponseEntity.ok(carrito);
+        }
+
+        @PostMapping("/create")
+        public ResponseEntity<Carrito> createCarrito() {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            Carrito carrito = carritoService.createCarrito(email);
+            return ResponseEntity.ok(carrito);
+        }
+
+    @GetMapping("/{id}")
     public ResponseEntity<Carrito> getCarritoById(@PathVariable Long id) {
         Carrito carrito = carritoService.findById(id);
         if (carrito == null) {
@@ -39,94 +60,152 @@ public class CarritoController {
         return ResponseEntity.ok(carrito);
     }
 
-    @PostMapping("/create") // crea un carrito
-    public ResponseEntity<Carrito> createCarrito(@RequestHeader("Authorization") String token) {
-        Carrito carritoCreado = carritoService.createCarrito();
-        return ResponseEntity.ok(carritoCreado);
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Carrito> updateCarrito(@PathVariable Long id, @RequestBody CarritoRequest carritoRequest) {
+        Carrito carritoActualizado = carritoService.updateCarrito(id, carritoRequest);
+        return ResponseEntity.ok(carritoActualizado);
     }
 
-    @PostMapping("/agregarProducto") // agrega producto al carrito
-    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest, @RequestHeader("Authorization") String token) {
-        Long productoId = parseLong(productoRequest.getProductoId());
-        try {
-            Carrito carrito = carritoService.agregarProductoAlCarrito(productoId, productoRequest.getCantidad());
-            return ResponseEntity.ok(carrito);
-        } catch (SinStockException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-        }
-    }
 
-    @DeleteMapping("/eliminarProducto") // elimina producto del carrito
-    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody ProductoRequest productoRequest) {
-        Long carritoId = parseLong(productoRequest.getCarritoId());
-        Long productoId = parseLong(productoRequest.getProductoId());
-        int cantidad = productoRequest.getCantidad();
-        carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
-        return ResponseEntity.noContent().build();
-    }
 
-    @DeleteMapping("/vaciarCarrito")
-    public ResponseEntity<Void> vaciarCarrito(@PathVariable Long carritoId) {
-        boolean resultado = carritoService.vaciarCarrito(carritoId);
-        if (resultado) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    @GetMapping("/obtenerCarrito")
-    public ResponseEntity<?> obtenerCarrito(@RequestHeader("Authorization") String token){
-        System.out.println("Token recibido: " + token); // Agregar log para saber si recibe ok.
-        Carrito carrito = carritoService.obtenerCarritoUsuario();
 
-        //si el carrito es null, no hay carrito creado para el usuario
-        if (carrito == null){
-            return ResponseEntity.ok("Aun no tenes productos en el carrito (acá no existe porque nunca se agrego un producto)");
-        }
 
-        //si el carrito no tiene productos
-        if (carrito.getItems()== null || carrito.getItems().isEmpty()){
-            return ResponseEntity.ok("Aún no tenes productos en el carrito. (acá existe pero no tiene productos)");
-        }
 
-        //si el carrito tiene producto, devuelve elcarrito completo
-        return ResponseEntity.ok(carrito);
-    }
 
-    @PutMapping("/descuento")
-    public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new RuntimeException("Usuario no autenticado");
-            }
-            Carrito carritoConDescuento = carritoService.aplicarDescuentoAlCarrito(descuentoRequest.getCodigoDescuento());
-            double descuentoAplicado = carritoConDescuento.getTotalOriginal() * carritoConDescuento.getPorcentajeDescuentoAplicado();
-            return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal() + ", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
-    @PutMapping("/checkout")
-    public ResponseEntity<?> realizarCheckout() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new RuntimeException("Usuario no autenticado");
-            }
-            carritoService.realizarCheckout();
-            return ResponseEntity.ok("Checkout realizado con éxito");
-        } catch (SinStockException e) {
-            // Si no hay suficiente stock, devolver el mensaje del servicio
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (RuntimeException e) {
-            // Cualquier otro error
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    @GetMapping("/all")
+//    public List<Carrito> getAllCarritos() {
+//        return carritoService.findAll();
+//    }
+//
+//    @GetMapping("/{id}")  // obtener carrito por id
+//    public ResponseEntity<Carrito> getCarritoById(@PathVariable Long id) {
+//        Carrito carrito = carritoService.findById(id);
+//        if (carrito == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        return ResponseEntity.ok(carrito);
+//    }
+//
+//    @PostMapping("/create") // crea un carrito
+//    public ResponseEntity<Carrito> createCarrito(@RequestHeader("Authorization") String token) {
+//        Carrito carritoCreado = carritoService.createCarrito();
+//        return ResponseEntity.ok(carritoCreado);
+//    }
+//
+//    @PostMapping("/agregarProducto") // agrega producto al carrito
+//    public ResponseEntity<Carrito> addProductoToCarrito(@RequestBody ProductoRequest productoRequest, @RequestHeader("Authorization") String token) {
+//        Long productoId = parseLong(productoRequest.getProductoId());
+//        try {
+//            Carrito carrito = carritoService.agregarProductoAlCarrito(productoId, productoRequest.getCantidad());
+//            return ResponseEntity.ok(carrito);
+//        } catch (SinStockException e) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+//        }
+//    }
+//
+//    @DeleteMapping("/eliminarProducto") // elimina producto del carrito
+//    public ResponseEntity<Void> removeProductoFromCarrito(@RequestBody ProductoRequest productoRequest) {
+//        Long carritoId = parseLong(productoRequest.getCarritoId());
+//        Long productoId = parseLong(productoRequest.getProductoId());
+//        int cantidad = productoRequest.getCantidad();
+//        carritoService.eliminarProductoDelCarrito(carritoId, productoId, cantidad);
+//        return ResponseEntity.noContent().build();
+//    }
+//
+//    @DeleteMapping("/vaciarCarrito")
+//    public ResponseEntity<Void> vaciarCarrito(@PathVariable Long carritoId) {
+//        boolean resultado = carritoService.vaciarCarrito(carritoId);
+//        if (resultado) {
+//            return ResponseEntity.noContent().build();
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//
+//    @GetMapping("/obtenerCarrito")
+//    public ResponseEntity<?> obtenerCarrito(@RequestHeader("Authorization") String token){
+//        System.out.println("Token recibido: " + token); // Agregar log para saber si recibe ok.
+//        Carrito carrito = carritoService.obtenerCarritoUsuario();
+//
+//        //si el carrito es null, no hay carrito creado para el usuario
+//        if (carrito == null){
+//            return ResponseEntity.ok("Aun no tenes productos en el carrito (acá no existe porque nunca se agrego un producto)");
+//        }
+//
+//        //si el carrito no tiene productos
+//        if (carrito.getItems()== null || carrito.getItems().isEmpty()){
+//            return ResponseEntity.ok("Aún no tenes productos en el carrito. (acá existe pero no tiene productos)");
+//        }
+//
+//        //si el carrito tiene producto, devuelve elcarrito completo
+//        return ResponseEntity.ok(carrito);
+//    }
+//
+//    @PutMapping("/descuento")
+//    public ResponseEntity<?> aplicarDescuento(@RequestBody DescuentoRequest descuentoRequest) {
+//        try {
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            if (authentication == null || !authentication.isAuthenticated()) {
+//                throw new RuntimeException("Usuario no autenticado");
+//            }
+//            Carrito carritoConDescuento = carritoService.aplicarDescuentoAlCarrito(descuentoRequest.getCodigoDescuento());
+//            double descuentoAplicado = carritoConDescuento.getTotalOriginal() * carritoConDescuento.getPorcentajeDescuentoAplicado();
+//            return ResponseEntity.ok("Total Original: $" + carritoConDescuento.getTotalOriginal() + ", Descuento aplicado: $" + descuentoAplicado + ", Precio Final: $" + carritoConDescuento.getTotalPrecio());
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+//        }
+//    }
+//
+//    @PutMapping("/checkout")
+//    public ResponseEntity<?> realizarCheckout() {
+//        try {
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            if (authentication == null || !authentication.isAuthenticated()) {
+//                throw new RuntimeException("Usuario no autenticado");
+//            }
+//            carritoService.realizarCheckout();
+//            return ResponseEntity.ok("Checkout realizado con éxito");
+//        } catch (SinStockException e) {
+//            // Si no hay suficiente stock, devolver el mensaje del servicio
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+//        } catch (RuntimeException e) {
+//            // Cualquier otro error
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        }
+//    }
 
 }

@@ -31,21 +31,21 @@ public class UserService {
         return new UserData(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(), Collections.emptyList(), Collections.emptyList());
     }
 
-    public UserData getAuthenticatedUserProfile() throws Exception {
-        var userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(userName).orElseThrow(() -> new Exception("El Usuario no se ha encontrado."));
-
-        List<Carrito> carritos = carritoService.obtenerCarritosPorUsuario(user.getId());
-
-        List<CarritoInfo> carritoInfoList = carritos.stream()
-                .map(carrito -> new CarritoInfo(carrito.getId(), (LocalDateTime) carrito.getFechaTransaccion()))
-                .collect(Collectors.toList());
-
-        UserData userData = new UserData(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),Collections.emptyList(), Collections.emptyList());
-//        userData.setCarritos(carritoInfoList);
-
-        return userData;
-
-    }
+//    public UserData getAuthenticatedUserProfile() throws Exception {
+//        var userName = SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user = userRepository.findByEmail(userName).orElseThrow(() -> new Exception("El Usuario no se ha encontrado."));
+//
+//        List<Carrito> carritos = carritoService.obtenerCarritosPorUsuario(user.getId());
+//
+//        List<CarritoInfo> carritoInfoList = carritos.stream()
+//                .map(carrito -> new CarritoInfo(carrito.getId(), (LocalDateTime) carrito.getFechaTransaccion()))
+//                .collect(Collectors.toList());
+//
+//        UserData userData = new UserData(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),Collections.emptyList(), Collections.emptyList());
+////        userData.setCarritos(carritoInfoList);
+//
+//        return userData;
+//
+//    }
 
 }
