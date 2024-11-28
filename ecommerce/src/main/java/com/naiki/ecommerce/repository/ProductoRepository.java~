@@ -17,7 +17,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Long>  {
     List<Producto> findByDestacado(Boolean destacado);
     List<Producto> findByCategoria(String categoria);
 
-    List<Producto> findByIdIn(List<Integer> visitados);
+    List<Producto> findByIdIn(List<String> visitados);
 
 
     @Modifying

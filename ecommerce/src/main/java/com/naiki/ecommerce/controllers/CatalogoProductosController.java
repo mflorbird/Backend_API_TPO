@@ -1,6 +1,7 @@
 package com.naiki.ecommerce.controllers;
 
 import com.naiki.ecommerce.repository.entity.Producto;
+import com.naiki.ecommerce.repository.entity.User;
 import com.naiki.ecommerce.service.CatalogoProductosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping ("api/v1/gestionCatalogo")
@@ -20,9 +22,18 @@ public class CatalogoProductosController {
 
     // Productos todos
     @GetMapping("/") //tested ok
-    public ResponseEntity<?> getProductos() {
+    public ResponseEntity<List<Producto>> getProductos() {
+    try {
+        System.out.println("Obteniendo productos");
         return ResponseEntity.ok(catalogoProductosService.getProductos());
+
+    } catch (Exception e) {
+        System.out.println("Error al obtener productos: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
+}
+
+
 
     @GetMapping("/productos/{productoId}") //tested ok
     public ResponseEntity<Producto> getDetalleProducto(@PathVariable("productoId") Long productoId) {
@@ -83,26 +94,38 @@ public ResponseEntity<List<Producto>> getProductosFavoritos() {
 
 
     @PatchMapping("/favoritos")
-    public ResponseEntity<?> updateFavorites(@RequestBody List<Producto> nuevosFavoritos) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName();
-            Boolean res = catalogoProductosService.updateFavorites(email, nuevosFavoritos);
-            return ResponseEntity.ok(res);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<?> updateFavorites(@RequestBody Map<String, Object> requestBody) {
+        List<Integer> nuevosFavoritos = (List<Integer>) requestBody.get("favoritos");
+        System.out.println("Actualizando favoritos" + nuevosFavoritos);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String email = authentication.getName();
+                User user = catalogoProductosService.updateFavorites(email, nuevosFavoritos);
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
     @PatchMapping("/visitados")
-    public ResponseEntity<?> updateVisitados(@RequestBody List<Producto> nuevosVisitados) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName();
-            Boolean res = catalogoProductosService.updateVisitados(email, nuevosVisitados);
-            return ResponseEntity.ok(res);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<?> updateVisitados(@RequestBody Map<String, Object> requestBody) {
+        List<Integer> nuevosVisitados = (List<Integer>) requestBody.get("visitados");
+        System.out.println("Actualizando visitados" + nuevosVisitados);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                String email = authentication.getName();
+                User user = catalogoProductosService.updateVisitados(email, nuevosVisitados);
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 

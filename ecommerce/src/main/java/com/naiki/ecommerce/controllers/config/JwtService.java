@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Function;
 
 
@@ -21,7 +22,13 @@ public class JwtService {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
 
-    public String generateToken(UserDetails userDetails, String role, String firstName, String lastName, String birthDate) {
+    public String generateToken(UserDetails userDetails,
+                                String role,
+                                String firstName,
+                                String lastName,
+                                String birthDate,
+                                List<Integer> favoritos,
+                                List<Integer> visitados){
         return Jwts
                 .builder()
                 .subject(userDetails.getUsername())
@@ -29,6 +36,8 @@ public class JwtService {
                 .claim("nombre", firstName)
                 .claim("apellido", lastName)
                 .claim("fechaNacimiento", birthDate)
+                .claim("favoritos", favoritos)
+                .claim("visitados", visitados)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSecretKey())
@@ -47,21 +56,6 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
 
-    }
-    public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
-    }
-
-    public String extractFirstName(String token) {
-        return extractClaim(token, claims -> claims.get("firstName", String.class));
-    }
-
-    public String extractLastName(String token) {
-        return extractClaim(token, claims -> claims.get("lastName", String.class));
-    }
-
-    public String extractBirthDate(String token) {
-        return extractClaim(token, claims -> claims.get("birthDate", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

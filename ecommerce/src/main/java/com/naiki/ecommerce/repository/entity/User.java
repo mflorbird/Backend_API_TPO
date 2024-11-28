@@ -2,6 +2,7 @@ package com.naiki.ecommerce.repository.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,11 +42,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private List<Producto> favoritos;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Integer> favoritos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private List<Producto> visitados;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Integer> visitados = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
