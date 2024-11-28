@@ -40,7 +40,13 @@ public class UserAuthenticationService {
                 .build();
 
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user, user.getRole().name(), user.getFirstName(), user.getLastName(), user.getBirthDate().toString());
+        var jwtToken = jwtService.generateToken(user,
+                                                user.getRole().name(),
+                                                user.getFirstName(),
+                                                user.getLastName(),
+                                                user.getBirthDate().toString(),
+                                                user.getFavoritos(),
+                                                user.getVisitados());
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .build();
@@ -54,7 +60,14 @@ public class UserAuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("El usuario con el email " + request.getEmail() + " no existe."));
-        var jwtToken = jwtService.generateToken(user, user.getRole().name(), user.getFirstName(), user.getLastName(), user.getBirthDate().toString());
+        var jwtToken = jwtService.generateToken(user,
+                                                user.getRole().name(),
+                                                user.getFirstName(),
+                                                user.getLastName(),
+                                                user.getBirthDate().toString(),
+                                                user.getFavoritos(),
+                                                user.getVisitados());
+
         return AuthResponse.builder()
                 .accessToken(jwtToken)
                 .build();

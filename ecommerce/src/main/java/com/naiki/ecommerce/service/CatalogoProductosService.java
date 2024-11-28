@@ -49,12 +49,13 @@ public class CatalogoProductosService {
     public List<Producto> getProductosRecientes(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
-        List<Producto> visitados = user.getVisitados();
+        List<Integer> visitados = user.getVisitados();
         if (visitados == null) {
             return new ArrayList<>();
         }
-        return visitados;
+        return productoRepository.findByIdIn(visitados);
     }
+
 
     // Productos destacados
     public List<Producto> getProductosDestacados() {
@@ -66,31 +67,34 @@ public class CatalogoProductosService {
         if (user.getFavoritos() == null) {
             return new ArrayList<>();
         }
-        return user.getFavoritos();
+        return productoRepository.findByIdIn(user.getFavoritos());
     }
 
     // Agregar un producto a la lista de productos visitados
-    public boolean updateVisitados(String email, List<Producto> nuevosVisitados) {
+    public User updateVisitados(String email, List<Integer> nuevosVisitados) {
         try {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
             user.setVisitados(nuevosVisitados);
             userRepository.save(user);
-            return true;
+            return user;
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 
-    public boolean updateFavorites(String email, List<Producto> nuevosFavoritos) {
+    public User updateFavorites(String email, List<Integer> nuevosFavoritos) {
         try {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
+            System.out.println("Favoritos: " + nuevosFavoritos);
+            System.out.println("User: " + user);
             user.setFavoritos(nuevosFavoritos);
             userRepository.save(user);
-            return true;
+            return user;
         } catch (Exception e) {
-            return false;
+            System.out.println("Error: " + e.getMessage());
+            return null;
         }
     }
 

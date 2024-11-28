@@ -19,8 +19,10 @@ public class GestionProductosController {
     public ResponseEntity<?> altaProducto(@RequestBody ProductRequest productRequest){
         try{
             gestionProductosService.altaProducto(productRequest);
+            System.out.println("Producto creado");
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }catch (Exception e) {
+            System.out.println("Error al crear producto" + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -30,9 +32,11 @@ public class GestionProductosController {
             @PathVariable("productoId") Long productoId,
             @RequestBody ProductRequest productRequest){
         try{
+            System.out.println("Modificando producto");
             gestionProductosService.modificarProducto(productoId, productRequest);
             return ResponseEntity.ok().build();
         }catch (Exception e) {
+            System.out.println("Error al modificar producto" + e.getMessage());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }

@@ -7,20 +7,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductRequest {
 
+    @NoArgsConstructor
     @Data
-    public class SizeStock {
+    public static class SizeStock {
         @JsonProperty("stock")
-        private int cantidad;
+        private String cantidad; // Cambiado a String
         @JsonProperty("size")
         private String talle;
-
     }
 
     @JsonProperty("model")
@@ -31,10 +30,11 @@ public class ProductRequest {
     private String descripcion;
     @JsonProperty("price")
     private Double precio;
-    @JsonProperty("stock")
+    @JsonProperty("stockTotal")
     private List<SizeStock> stockTotal;
     @JsonProperty("featured")
-    private boolean destacado;
+    private String destacado; // Cambiado a String
     @JsonProperty("image")
     private String imagen;
-}
+
+    }
