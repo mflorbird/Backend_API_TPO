@@ -38,7 +38,8 @@ public class SecurityConfig {
 //                                "/api/v1/gestionCatalogo/productos/destacados",
 //                                "/api/v1/gestionCatalogo/productos/categoria/*",
 //                                "/api/v1/gestionCatalogo/productos/{productoId}/stock",
-                                "/api/v1/gestionProductos/**"
+                                "/api/v1/gestionProductos/**",
+                                "/api/v1/carritos"
                         )
                         .permitAll()
                         .requestMatchers("/api/v1/user/**"
