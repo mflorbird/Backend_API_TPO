@@ -22,7 +22,7 @@ public class Carrito {
     private Long userId;
 
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Map<Long, ItemCarrito> items;
+    private Map<String, ItemCarrito> items;
 
     @Column(name = "estado")
     private String estado = "activo";

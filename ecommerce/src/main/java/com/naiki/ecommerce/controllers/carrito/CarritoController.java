@@ -35,7 +35,7 @@ public class CarritoController {
             String email = authentication.getName();
             Carrito carrito = carritoService.obtenerCarritoUsuario(email);
             if (carrito == null) {
-                return ResponseEntity.ok("Aun no tenes productos en el carrito");
+                return ResponseEntity.ok(null);
             }
             return ResponseEntity.ok(carrito);
         }
@@ -63,8 +63,28 @@ public class CarritoController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Carrito> updateCarrito(@PathVariable Long id, @RequestBody CarritoRequest carritoRequest) {
-        Carrito carritoActualizado = carritoService.updateCarrito(id, carritoRequest);
-        return ResponseEntity.ok(carritoActualizado);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                System.out.println("Usuario no autenticado");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+            if (carrito == null) {
+                System.out.println("No se encontró el carrito");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
+            }
+            if (!carrito.getId().equals(id)) {
+                System.out.println("No tienes permisos para modificar este carrito");
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permisos para modificar este carrito");
+            }
+            Carrito carritoActualizado = carritoService.updateCarrito(id, carritoRequest);
+            System.out.println("Carrito actualizado " + carritoActualizado);
+            return ResponseEntity.ok(carritoActualizado);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
 
