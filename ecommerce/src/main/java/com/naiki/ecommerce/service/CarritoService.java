@@ -72,18 +72,32 @@ public class CarritoService {
         return carrito;
     }
 
-    //updateCarrito
 
     @Transactional(rollbackFor = Exception.class)
     public Carrito updateCarrito(Long carritoId, CarritoRequest carritoRequest) {
         Carrito carrito = carritoRepository.findById(carritoId)
                 .orElseThrow(() -> new RuntimeException("Carrito no encontrado"));
-        carrito.setPrecioTotal(carritoRequest.getPrecioTotal());
-        carrito.setPrecioDiscount(carritoRequest.getPrecioDiscount());
-        carrito.setDiscount(carritoRequest.getDiscount());
-        carrito.setEstado(carritoRequest.getEstado());
-        carrito.setClosedAt(carritoRequest.getClosedAt());
-        carrito.setItems(carritoRequest.getItems());
+        System.out.println("Carrito encontrado" + carrito);
+        System.out.println("CarritoRequest" + carritoRequest);
+        if (carritoRequest.getPrecioTotal() != null) {
+            carrito.setPrecioTotal(carritoRequest.getPrecioTotal());
+        }
+        if (carritoRequest.getPrecioDiscount() != null) {
+            carrito.setPrecioDiscount(carritoRequest.getPrecioDiscount());
+        }
+        if (carritoRequest.getDiscount() != null) {
+            carrito.setDiscount(carritoRequest.getDiscount());
+        }
+        if (carritoRequest.getEstado() != null) {
+            carrito.setEstado(carritoRequest.getEstado());
+        }
+        if (carritoRequest.getClosedAt() != null) {
+            carrito.setClosedAt(carritoRequest.getClosedAt());
+        }
+        if (carritoRequest.getItems() != null && !carritoRequest.getItems().isEmpty()) {
+            carrito.setItems(carritoRequest.getItems());
+        }
+        System.out.println("Carrito actualizado" + carrito);
         carritoRepository.save(carrito);
         return carrito;
     }

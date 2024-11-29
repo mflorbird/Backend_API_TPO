@@ -18,7 +18,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class CarritoRequest {
 
-    private Map<Long, ItemCarrito> items;
+    private Map<String, ItemCarrito> items;
     private Double precioTotal;
     private Double precioDiscount;
     private Double discount;
