@@ -1,5 +1,6 @@
 package com.naiki.ecommerce.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,21 +23,26 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @JsonProperty("usuario")
     private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
+    @JsonProperty("contraseña")
     private String password;
 
     @Column(nullable = false)
+    @JsonProperty("nombre")
     private String firstName;
 
     @Column(nullable = false)
+    @JsonProperty("apellido")
     private String lastName;
 
     @Column(nullable = false)
+    @JsonProperty("fechaNacimiento")
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)

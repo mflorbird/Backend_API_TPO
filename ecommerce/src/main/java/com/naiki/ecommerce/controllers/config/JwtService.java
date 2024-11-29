@@ -27,6 +27,7 @@ public class JwtService {
                                 String firstName,
                                 String lastName,
                                 String birthDate,
+                                String username,
                                 List<Integer> favoritos,
                                 List<Integer> visitados){
         return Jwts
@@ -36,6 +37,7 @@ public class JwtService {
                 .claim("nombre", firstName)
                 .claim("apellido", lastName)
                 .claim("fechaNacimiento", birthDate)
+                .claim("usuario", username)
                 .claim("favoritos", favoritos)
                 .claim("visitados", visitados)
                 .issuedAt(new Date(System.currentTimeMillis()))
