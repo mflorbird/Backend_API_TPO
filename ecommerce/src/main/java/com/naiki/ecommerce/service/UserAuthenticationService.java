@@ -45,6 +45,7 @@ public class UserAuthenticationService {
                                                 user.getFirstName(),
                                                 user.getLastName(),
                                                 user.getBirthDate().toString(),
+                                                user.getUsername(),
                                                 user.getFavoritos(),
                                                 user.getVisitados());
         return AuthResponse.builder()
@@ -65,6 +66,7 @@ public class UserAuthenticationService {
                                                 user.getFirstName(),
                                                 user.getLastName(),
                                                 user.getBirthDate().toString(),
+                                                user.getUsername(),
                                                 user.getFavoritos(),
                                                 user.getVisitados());
 
