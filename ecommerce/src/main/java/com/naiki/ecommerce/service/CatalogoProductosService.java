@@ -1,21 +1,13 @@
 package com.naiki.ecommerce.service;
 
-import com.naiki.ecommerce.repository.ProductoFavoritoRepository;
-import com.naiki.ecommerce.repository.ProductoRepository;
-import com.naiki.ecommerce.repository.ProductoVisitadoRepository;
-import com.naiki.ecommerce.repository.UserRepository;
-import com.naiki.ecommerce.repository.entity.User;
-import com.naiki.ecommerce.repository.entity.Producto;
-import com.naiki.ecommerce.repository.entity.ProductoFavorito;
-import com.naiki.ecommerce.repository.entity.ProductoVisitado;
+import com.naiki.ecommerce.repository.*;
+import com.naiki.ecommerce.repository.entity.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CatalogoProductosService {
@@ -24,10 +16,7 @@ public class CatalogoProductosService {
     private ProductoRepository productoRepository;
 
     @Autowired
-    private ProductoVisitadoRepository productoVisitadoRepository;
-
-    @Autowired
-    private ProductoFavoritoRepository productoFavoritoRepository;
+    private CarritoRepository carritoRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -98,4 +87,53 @@ public class CatalogoProductosService {
         }
     }
 
+    public List<ProductoDisponible> getProductosDisponibles(String email) {
+        // Buscar el carrito de compras del usuario
+        try {
+            User user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
+
+            Carrito carrito = carritoRepository.findByUserIdAndEstado(user.getId(), "activo");
+
+            List<ProductoDisponible> productosDisponibles = new ArrayList<>();
+
+            // Buscar en los items del carrito
+            for (String key : carrito.getItems().keySet()) {
+                ProductoDisponible productoDisponible = new ProductoDisponible();
+                productoDisponible.setItemId(key);
+                productoDisponible.setCarritoId(String.valueOf(carrito.getId()));
+
+                String[] keyParts = key.split("---");
+                String productoId = keyParts[0];
+                String talle = keyParts[1];
+
+                productoDisponible.setProductoId(productoId);
+
+                // Buscar el producto en la base de datos
+                Optional<Producto> producto = productoRepository.findById(Long.valueOf(productoId));
+
+                if (producto.isEmpty()) {
+                    productoDisponible.setDisponible(false);
+                } else {
+                    productoDisponible.setDisponible(true);
+
+                    for (SizeStock sizeStock : producto.get().getStockTotal()) {
+                        if (sizeStock.getTalle().equals(talle)) {
+                            productoDisponible.setCantidadMaxima(sizeStock.getCantidad());
+                            break;
+                        }
+                    }
+                }
+
+                productosDisponibles.add(productoDisponible);
+            }
+
+            return productosDisponibles;
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return Collections.emptyList(); // Return an empty list instead of null
+        }
+    }
 }
+
