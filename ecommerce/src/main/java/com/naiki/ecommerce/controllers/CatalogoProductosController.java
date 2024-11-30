@@ -1,8 +1,10 @@
 package com.naiki.ecommerce.controllers;
 
 import com.naiki.ecommerce.repository.entity.Producto;
+import com.naiki.ecommerce.repository.entity.ProductoDisponible;
 import com.naiki.ecommerce.repository.entity.User;
 import com.naiki.ecommerce.service.CatalogoProductosService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -126,6 +128,28 @@ public ResponseEntity<List<Producto>> getProductosFavoritos() {
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<ProductoDisponible>> getProductosDisponibles() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            String email = authentication.getName();
+            List<ProductoDisponible> productosDisponibles = catalogoProductosService.getProductosDisponibles(email);
+
+            return ResponseEntity.ok(productosDisponibles);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            // Log the actual error for server-side debugging
+            System.err.println("Error al obtener productos disponibles: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

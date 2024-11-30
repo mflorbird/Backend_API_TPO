@@ -54,6 +54,9 @@ public class GestionProductosController {
 
 
 
+
+
+
 //    @PutMapping("/productos/{productoId}/destacado")
 //    public ResponseEntity<?> modificarDestacadoProducto(@RequestParam("productoId") Long productoId, @RequestParam("destacado") boolean destacado) {
 //        try{

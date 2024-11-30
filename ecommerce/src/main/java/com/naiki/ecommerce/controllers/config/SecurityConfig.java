@@ -29,27 +29,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors() // Habilitar soporte CORS
+                .cors()
                 .and()
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/v1/authenticate/**",
+                                "/status",
+                                "/error",
                                 "/api/v1/gestionCatalogo/**",
-//                                "/api/v1/gestionCatalogo/productos/",
-//                                "/api/v1/gestionCatalogo/productos/destacados",
-//                                "/api/v1/gestionCatalogo/productos/categoria/*",
-//                                "/api/v1/gestionCatalogo/productos/{productoId}/stock",
-                                "/api/v1/gestionProductos/**",
                                 "/api/v1/carritos"
                         )
                         .permitAll()
-                        .requestMatchers("/api/v1/user/**"
-//                                "/api/v1/gestionProductos/productos",
-//                                "/api/v1/gestionProductos/productos/{productoId}/stock",
-//                                "/api/v1/gestionProductos/productos/{productoId}/destacado",
-//                                "/api/v1/gestionProductos/productos/{productoId}"
-                        )
+                        .requestMatchers("/api/v1/user/**","/api/v1/gestionProductos/**")
                         .hasAuthority(Role.ADMIN.name())
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Permitir OPTIONS
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -72,3 +64,83 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//@Configuration
+//@EnableWebSecurity
+//@RequiredArgsConstructor
+//public class SecurityConfig {
+//
+//    private final JwtAuthFilter jwtAuthenticationFilter;
+//    private final AuthenticationProvider authenticationProvider;
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors() // Habilitar soporte CORS
+//                .and()
+//                .authorizeHttpRequests(req -> req
+//                        .requestMatchers("/api/v1/authenticate/**",
+//                                "/status",
+//                                "/api/v1/gestionCatalogo/**",
+////                                "/api/v1/gestionCatalogo/productos/",
+////                                "/api/v1/gestionCatalogo/productos/destacados",
+////                                "/api/v1/gestionCatalogo/productos/categoria/*",
+////                                "/api/v1/gestionCatalogo/productos/{productoId}/stock",
+//                                "/api/v1/gestionProductos/**",
+//                                "/api/v1/carritos"
+//                        )
+//                        .permitAll()
+//                        .requestMatchers("/api/v1/user/**"
+////                                "/api/v1/gestionProductos/productos",
+////                                "/api/v1/gestionProductos/productos/{productoId}/stock",
+////                                "/api/v1/gestionProductos/productos/{productoId}/destacado",
+////                                "/api/v1/gestionProductos/productos/{productoId}"
+//                        )
+//                        .hasAuthority(Role.ADMIN.name())
+//                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Permitir OPTIONS
+//                        .anyRequest().authenticated())
+//                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+//                .authenticationProvider(authenticationProvider)
+//                .addFilterBefore((Filter) jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//
+//        return http.build();
+//    }
+//
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.addAllowedOrigin("http://localhost:3000");
+//        config.addAllowedOrigin("http://localhost:5173");
+//        config.addAllowedOrigin("http://localhost:5174");
+//        config.addAllowedHeader("*");
+//        config.addAllowedMethod("*");
+//        config.setAllowCredentials(true);
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
+//}
