@@ -87,7 +87,7 @@ public class CarritoController {
         }
     }
 
-    @DeleteMapping("/{itemId}")
+    @DeleteMapping("/item/{itemId}")
     public ResponseEntity<Carrito> deleteItem(@PathVariable String itemId) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,6 +100,25 @@ public class CarritoController {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
             }
             Carrito carritoActualizado = carritoService.deleteItem(itemId, carrito);
+            return ResponseEntity.ok(carritoActualizado);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/cart/{cartId}")
+    public ResponseEntity<Carrito> emptyCart(@PathVariable Long cartId) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+            if (carrito == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
+            }
+            Carrito carritoActualizado = carritoService.emptyCart(cartId, carrito);
             return ResponseEntity.ok(carritoActualizado);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
