@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "item_carrito")
 public class ItemCarrito {
 
     @Id

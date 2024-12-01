@@ -44,7 +44,6 @@ public class CarritoService {
         return carritoRepository.findById(id).orElse(null);
     }
 
-    //obtenerCarritoUsuario
     public Carrito obtenerCarritoUsuario(String email) {
         long usuarioId = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
@@ -94,14 +93,21 @@ public class CarritoService {
         if (carritoRequest.getClosedAt() != null) {
             carrito.setClosedAt(carritoRequest.getClosedAt());
         }
-        if (carritoRequest.getItems() != null && !carritoRequest.getItems().isEmpty()) {
+        if (carritoRequest.getItems() != null) {
             carrito.setItems(carritoRequest.getItems());
         }
         System.out.println("Carrito actualizado" + carrito);
         carritoRepository.save(carrito);
         return carrito;
     }
+
+    public Carrito deleteItem(String itemId, Carrito carrito) {
+        itemCarritoRepository.eliminarPorItemKeyAndCarritoId(itemId, carrito.getId());
+        Carrito carritoActualizado = carritoRepository.findById(carrito.getId()).orElse(null);
+        return carritoActualizado;
+    }
 }
+
 
 
 
