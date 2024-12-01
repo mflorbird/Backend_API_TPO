@@ -71,16 +71,4 @@ public class GestionProductosService {
     }
 
 
-
-
-//    public void modificarDestacadoProducto(Long id, boolean destacado){
-//        productoRepository.modificarDestacado(id, destacado);
-//    }
-
-
-
-    public Producto getProducto(Long id) {
-        Producto producto = productoRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-        return producto;
-    }
 }
