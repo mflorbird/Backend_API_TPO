@@ -12,11 +12,6 @@ import java.util.List;
 @Repository
 public interface CarritoRepository extends JpaRepository <Carrito, Long>{
     List<Carrito> findByUserId(Long userId);
-    Carrito findByUserIdAndEstado(Long userId, String estado);
+    List<Carrito> findByUserIdAndEstado(Long userId, String estado);
 
 }
-
-//findAll(): obtener carritos
-//findById(long id): busca el carrito x ID
-//save(Carrito ccarito): guarda o atualizael carro en BD
-//DELETE(Carrito carrito): elimina carrito

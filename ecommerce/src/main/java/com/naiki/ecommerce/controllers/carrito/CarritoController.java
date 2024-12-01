@@ -125,6 +125,43 @@ public class CarritoController {
         }
     }
 
+    @PostMapping("/checkout")
+    public ResponseEntity<?> realizarCheckout() {
+        System.out.println("Realizar checkout");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            System.out.println("Usuario autenticado");
+            String email = authentication.getName();
+            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+            if (carrito == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
+            }
+            System.out.println("Carrito encontrado");
+            CheckoutResponse response = carritoService.realizarCheckout(carrito);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/closed")
+    public ResponseEntity<?> obtenerCarritosCerrados() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            List<Carrito> carritos = carritoService.obtenerCarritosCerrados(email);
+            return ResponseEntity.ok(carritos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }
 
 //            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

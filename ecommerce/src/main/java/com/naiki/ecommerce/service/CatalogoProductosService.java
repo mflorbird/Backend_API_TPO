@@ -21,12 +21,10 @@ public class CatalogoProductosService {
     @Autowired
     private UserRepository userRepository;
 
-    // Productos todos
     public List<Producto> getProductos() {
         return productoRepository.findAll();
     }
 
-    // Detalle de un producto
     public Producto getDetalleProducto(Long productoId) {
         return productoRepository.findById(productoId)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado para ID: " + productoId));
@@ -34,7 +32,6 @@ public class CatalogoProductosService {
 
 
 
-    // Productos recientes vistos por el usuario
     public List<Producto> getProductosRecientes(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
@@ -46,7 +43,6 @@ public class CatalogoProductosService {
     }
 
 
-    // Productos destacados
     public List<Producto> getProductosDestacados() {
         return productoRepository.findByDestacado(true);
     }
@@ -59,7 +55,6 @@ public class CatalogoProductosService {
         return productoRepository.findByIdIn(user.getFavoritos());
     }
 
-    // Agregar un producto a la lista de productos visitados
     public User updateVisitados(String email, List<Integer> nuevosVisitados) {
         try {
             User user = userRepository.findByEmail(email)
@@ -88,16 +83,15 @@ public class CatalogoProductosService {
     }
 
     public List<ProductoDisponible> getProductosDisponibles(String email) {
-        // Buscar el carrito de compras del usuario
         try {
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para email: " + email));
 
-            Carrito carrito = carritoRepository.findByUserIdAndEstado(user.getId(), "activo");
+            List<Carrito> carritos = carritoRepository.findByUserIdAndEstado(user.getId(), "activo");
+            Carrito carrito = carritos.get(0);
 
             List<ProductoDisponible> productosDisponibles = new ArrayList<>();
 
-            // Buscar en los items del carrito
             for (String key : carrito.getItems().keySet()) {
                 ProductoDisponible productoDisponible = new ProductoDisponible();
                 productoDisponible.setItemId(key);
@@ -109,7 +103,6 @@ public class CatalogoProductosService {
 
                 productoDisponible.setProductoId(productoId);
 
-                // Buscar el producto en la base de datos
                 Optional<Producto> producto = productoRepository.findById(Long.valueOf(productoId));
 
                 if (producto.isEmpty()) {
@@ -132,7 +125,7 @@ public class CatalogoProductosService {
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
-            return Collections.emptyList(); // Return an empty list instead of null
+            return Collections.emptyList();
         }
     }
 }

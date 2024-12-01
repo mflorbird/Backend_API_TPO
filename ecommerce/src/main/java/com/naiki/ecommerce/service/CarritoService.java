@@ -1,22 +1,18 @@
 package com.naiki.ecommerce.service;
 
+import com.naiki.ecommerce.controllers.carrito.CheckoutResponse;
 import com.naiki.ecommerce.dto.CarritoRequest;
-import com.naiki.ecommerce.exception.SinStockException;
 import com.naiki.ecommerce.repository.CarritoRepository;
 import com.naiki.ecommerce.repository.ItemCarritoRepository;
 import com.naiki.ecommerce.repository.ProductoRepository;
 import com.naiki.ecommerce.repository.UserRepository;
-import com.naiki.ecommerce.repository.entity.Carrito;
-import com.naiki.ecommerce.repository.entity.ItemCarrito;
-import com.naiki.ecommerce.repository.entity.Producto;
+import com.naiki.ecommerce.repository.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service // para que spring la pueda poner en otras partes.
 public class CarritoService {
@@ -117,9 +113,105 @@ public class CarritoService {
         Carrito carritoActualizado = carritoRepository.findById(carrito.getId()).orElse(null);
         return carritoActualizado;
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CheckoutResponse realizarCheckout(Carrito carrito) {
+
+
+
+        List<CheckoutResponse.InvalidItem> invalidItems = new ArrayList<>();
+        Map<String, CheckoutResponse.Validation> validations = new HashMap<>();
+
+        // Validación de stock
+        for (String itemKey : carrito.getItems().keySet()) {
+            String[] keyParts = itemKey.split("---");
+            String productoId = keyParts[0];
+            String talle = keyParts[1];
+            System.out.println("Producto ID: " + productoId);
+            System.out.println("Talle: " + talle);
+            int cantidadSolicitada = carrito.getItems().get(itemKey).getCantidad();
+
+            System.out.println("Cantidad solicitada: " + cantidadSolicitada);
+            Optional<Producto> producto = productoRepository.findById(Long.valueOf(productoId));
+            if (producto.isEmpty()) {
+                invalidItems.add(new CheckoutResponse.InvalidItem("Producto no encontrado (ID: " + productoId + ")", talle));
+                validations.put(itemKey, new CheckoutResponse.Validation(false, cantidadSolicitada, 0));
+                continue;
+            }
+
+            Producto productoEncontrado = producto.get();
+            System.out.println("Producto encontrado: " + productoEncontrado);
+            boolean stockValido = false;
+
+            for (SizeStock sizeStock : productoEncontrado.getStockTotal()) {
+                if (sizeStock.getTalle().equals(talle)) {
+                    boolean stockDisponible = sizeStock.getCantidad() >= cantidadSolicitada;
+                    System.out.println("Stock disponible: " + stockDisponible);
+
+                    validations.put(
+                            itemKey,
+                            new CheckoutResponse.Validation(stockDisponible, cantidadSolicitada, sizeStock.getCantidad())
+                    );
+
+                    if (!stockDisponible) {
+                        invalidItems.add(new CheckoutResponse.InvalidItem(productoEncontrado.getNombre(), talle));
+                    } else {
+                        stockValido = true;
+                    }
+                }
+            }
+
+            if (!stockValido) {
+                return new CheckoutResponse(
+                        false,
+                        "No hay suficiente stock para algunos productos",
+                        invalidItems,
+                        validations
+                );
+            }
+        }
+
+        // Actualización del stock y cierre del carrito
+        for (String itemKey : carrito.getItems().keySet()) {
+            String[] keyParts = itemKey.split("---");
+            String productoId = keyParts[0];
+            String talle = keyParts[1];
+            int cantidadSolicitada = carrito.getItems().get(itemKey).getCantidad();
+
+            Producto productoEncontrado = productoRepository.findById(Long.valueOf(productoId)).get();
+
+            for (SizeStock sizeStock : productoEncontrado.getStockTotal()) {
+                if (sizeStock.getTalle().equals(talle)) {
+                    sizeStock.setCantidad(sizeStock.getCantidad() - cantidadSolicitada);
+                    System.out.println("Stock actualizado: " + sizeStock.getCantidad());
+                    productoRepository.save(productoEncontrado);
+                    System.out.println("Producto actualizado: " + productoEncontrado);
+                    break;
+                }
+            }
+        }
+        System.out.println("Carrito por cerrar: " + carrito);
+        carrito.setEstado("cerrado");
+        carrito.setClosedAt(LocalDateTime.now());
+        System.out.println("Carrito por cerrar 2: " + carrito);
+        carritoRepository.save(carrito);
+        System.out.println("Carrito cerrado: " + carrito);
+
+        return new CheckoutResponse(
+                true,
+                "Checkout realizado con éxito",
+                Collections.emptyList(),
+                validations
+        );
+    }
+
+    public List<Carrito> obtenerCarritosCerrados(String email) {
+        long usuarioId = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
+                .getId();
+        return carritoRepository.findByUserIdAndEstado(usuarioId, "cerrado");
+    }
 }
-
-
 
 
 
