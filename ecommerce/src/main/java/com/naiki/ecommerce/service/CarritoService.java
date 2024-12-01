@@ -106,6 +106,17 @@ public class CarritoService {
         Carrito carritoActualizado = carritoRepository.findById(carrito.getId()).orElse(null);
         return carritoActualizado;
     }
+
+    public Carrito emptyCart(Long cartId, Carrito carrito) {
+        itemCarritoRepository.eliminarPorCarritoId(cartId);
+        carrito.setPrecioTotal(0.0);
+        carrito.setDiscount(0.0);
+        carrito.setPrecioDiscount(0.0);
+        carrito.setItems(null);
+        carritoRepository.save(carrito);
+        Carrito carritoActualizado = carritoRepository.findById(carrito.getId()).orElse(null);
+        return carritoActualizado;
+    }
 }
 
 
