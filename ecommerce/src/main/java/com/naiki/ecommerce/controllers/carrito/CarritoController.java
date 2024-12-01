@@ -26,30 +26,30 @@ public class CarritoController {
     private CarritoService carritoService;
 
 
-        @GetMapping("/")
-        public ResponseEntity<?> obtenerCarritoUsuario() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
-            }
-            String email = authentication.getName();
-            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
-            if (carrito == null) {
-                return ResponseEntity.ok(null);
-            }
-            return ResponseEntity.ok(carrito);
+    @GetMapping("/")
+    public ResponseEntity<?> obtenerCarritoUsuario() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
         }
+        String email = authentication.getName();
+        Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+        if (carrito == null) {
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.ok(carrito);
+    }
 
-        @PostMapping("/create")
-        public ResponseEntity<Carrito> createCarrito() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
-            }
-            String email = authentication.getName();
-            Carrito carrito = carritoService.createCarrito(email);
-            return ResponseEntity.ok(carrito);
+    @PostMapping("/create")
+    public ResponseEntity<Carrito> createCarrito() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
         }
+        String email = authentication.getName();
+        Carrito carrito = carritoService.createCarrito(email);
+        return ResponseEntity.ok(carrito);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Carrito> getCarritoById(@PathVariable Long id) {
@@ -86,6 +86,42 @@ public class CarritoController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Carrito> deleteItem(@PathVariable String itemId) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+            }
+            String email = authentication.getName();
+            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+            if (carrito == null) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
+            }
+            Carrito carritoActualizado = carritoService.deleteItem(itemId, carrito);
+            return ResponseEntity.ok(carritoActualizado);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+}
+
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            if (authentication == null || !authentication.isAuthenticated()) {
+//                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no autenticado");
+//            }
+//            String email = authentication.getName();
+//            Carrito carrito = carritoService.obtenerCarritoUsuario(email);
+//            if (carrito == null) {
+//                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No se encontró el carrito");
+//            }
+//            carritoService.deleteItem(itemId);
+//            return ResponseEntity.noContent().build();
+//        } catch (IllegalArgumentException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+//        }
 
 
 
@@ -228,4 +264,3 @@ public class CarritoController {
 //        }
 //    }
 
-}
