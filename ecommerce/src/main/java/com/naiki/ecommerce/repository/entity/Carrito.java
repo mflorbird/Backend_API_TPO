@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class Carrito {
     private Long userId;
 
     @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Map<String, ItemCarrito> items;
+    private Map<String, ItemCarrito> items = new HashMap<>();
 
     @Column(name = "estado")
     private String estado = "activo";
